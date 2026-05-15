@@ -1,0 +1,181 @@
+:root {
+  --bg: #f7f6f3;
+  --bg-card: #ffffff;
+  --bg-nav: #2c2c2c;
+  --bg-code: #282c34;
+  --text-primary: #2c2c2c;
+  --text-secondary: #6b6b6b;
+  --text-muted: #999;
+  --text-on-dark: #fff;
+  --accent: #c0392b;
+  --accent-hover: #a93226;
+  --accent-light: #fdf2f2;
+  --border: #e8e5e0;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --radius: 6px;
+  --max-width: 980px;
+  --content-width: 720px;
+  --bg-inline-code: #f0ede8;
+  --bg-code-text: #abb2bf;
+  --bg-toolbar: #fafaf8;
+  --bg-toolbar-border: #f0ede8;
+  --bg-toolbar-hover: #e8e5e0;
+  --bg-highlight: #fff3cd;
+  --bg-nav-hover: rgba(255,255,255,0.08);
+  --bg-nav-active: rgba(255,255,255,0.12);
+  --text-nav: rgba(255,255,255,0.65);
+  --text-nav-logout: rgba(255,255,255,0.45);
+  --border-nav: rgba(255,255,255,0.06);
+  --btn-edit-hover: #444;
+  --scrollbar-thumb: #ccc;
+  --scrollbar-thumb-hover: #aaa;
+}
+
+[data-theme="dark"] {
+  --bg: #1a1a1a;
+  --bg-card: #242424;
+  --bg-nav: #1e1e1e;
+  --bg-code: #282c34;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --text-muted: #666;
+  --text-on-dark: #fff;
+  --accent: #e74c3c;
+  --accent-hover: #c0392b;
+  --accent-light: #2a1a1a;
+  --border: #333;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.3);
+  --bg-inline-code: #2a2a2a;
+  --bg-code-text: #abb2bf;
+  --bg-toolbar: #2a2a2a;
+  --bg-toolbar-border: #333;
+  --bg-toolbar-hover: #3a3a3a;
+  --bg-highlight: #3a3020;
+  --bg-nav-hover: rgba(255,255,255,0.1);
+  --bg-nav-active: rgba(255,255,255,0.15);
+  --text-nav: rgba(255,255,255,0.7);
+  --text-nav-logout: rgba(255,255,255,0.5);
+  --border-nav: rgba(255,255,255,0.08);
+  --btn-edit-hover: #555;
+  --scrollbar-thumb: #555;
+  --scrollbar-thumb-hover: #777;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', Georgia, 'Times New Roman', serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Noto Sans SC', 'Source Han Sans SC', 'PingFang SC', system-ui, sans-serif;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+.main-content {
+  min-height: calc(100vh - 56px);
+  padding-bottom: 0;
+}
+
+a {
+  color: inherit;
+  transition: color 0.2s;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--text-on-dark);
+}
+
+img {
+  max-width: 100%;
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* 按钮基础 */
+.btn {
+  display: inline-block;
+  padding: 8px 20px;
+  border-radius: var(--radius);
+  text-decoration: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  transition: all 0.2s;
+}
+
+.btn-edit {
+  background: var(--bg-nav);
+  color: var(--text-on-dark);
+}
+
+.btn-edit:hover {
+  background: var(--btn-edit-hover);
+}
+
+/* 状态 */
+.page-status {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+.page-status.error {
+  color: var(--accent);
+}
+
+.empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 60px 0;
+}
+
+.empty a {
+  color: var(--accent);
+}
+
+/* Tag */
+.tag {
+  background: var(--bg);
+  color: var(--text-secondary);
+  padding: 2px 10px;
+  border-radius: 3px;
+  font-size: 0.78rem;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  border: 1px solid var(--border);
+}

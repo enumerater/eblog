@@ -1,0 +1,37 @@
+.site-footer {
+  margin-top: 60px;
+  border-top: 1px solid var(--border);
+  padding: 24px;
+}
+
+.footer-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+}
+
+.footer-brand {
+  font-family: 'Georgia', serif;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.footer-sep {
+  margin: 0 8px;
+  color: var(--border);
+}
+
+.footer-right a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-right a:hover {
+  color: var(--accent);
+}

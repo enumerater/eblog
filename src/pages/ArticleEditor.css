@@ -1,0 +1,186 @@
+.editor-page {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.editor-layout {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.editor-layout .editor-form {
+  flex: 1;
+  min-width: 0;
+}
+
+.editor-toc-sidebar {
+  position: sticky;
+  top: 72px;
+  width: 200px;
+  flex-shrink: 0;
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+}
+
+@media (max-width: 1200px) {
+  .editor-toc-sidebar {
+    display: none;
+  }
+  .editor-layout {
+    display: block;
+  }
+}
+
+.editor-page h1 {
+  color: var(--text-primary);
+  margin-bottom: 28px;
+  font-size: 1.5rem;
+}
+
+.editor-error {
+  background: var(--accent-light);
+  color: var(--accent);
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  font-size: 0.9rem;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+}
+
+.editor-form .form-group {
+  margin-bottom: 22px;
+}
+
+.editor-form label {
+  display: block;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  font-size: 0.85rem;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+}
+
+.editor-form input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+  background: var(--bg-card);
+  color: var(--text-primary);
+}
+
+.editor-form input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.editor-form input::placeholder {
+  color: var(--text-muted);
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.btn-submit {
+  background: var(--accent);
+  color: var(--text-on-dark);
+  font-weight: 600;
+}
+
+.btn-submit:hover {
+  background: var(--accent-hover);
+}
+
+.btn-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  background: var(--bg);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.btn-cancel:hover {
+  background: var(--bg-toolbar-hover);
+}
+
+/* �辑器目录样式 */
+.editor-toc-sidebar .toc-nav {
+  display: flex;
+  flex-direction: column;
+  border-left: 2px solid var(--border);
+}
+
+.editor-toc-sidebar .toc-link {
+  display: block;
+  padding: 4px 0 4px 14px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  line-height: 1.5;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  transition: color 0.2s;
+  border-left: 2px solid transparent;
+  margin-left: -2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.editor-toc-sidebar .toc-link:hover {
+  color: var(--text-primary);
+}
+
+.editor-toc-sidebar .toc-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+}
+
+.editor-toc-sidebar .toc-level-3 {
+  padding-left: 28px;
+  font-size: 0.76rem;
+}
+
+/* Draft save status */
+.draft-save-status {
+  font-size: 0.8rem;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  padding: 4px 0;
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+}
+
+.draft-save-saving {
+  color: var(--text-muted);
+}
+
+.draft-save-saved {
+  color: #4caf50;
+}
+
+.draft-save-error {
+  color: var(--accent);
+}
+
+/* Draft button styling */
+.btn-draft {
+  background: var(--bg);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.btn-draft:hover {
+  background: var(--bg-toolbar-hover);
+}

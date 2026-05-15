@@ -1,0 +1,103 @@
+.admin-page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.admin-header h1 {
+  color: var(--text-primary);
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  font-size: 0.9rem;
+}
+
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.admin-table th {
+  background: var(--bg);
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+}
+
+.admin-table td a {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s;
+}
+
+.admin-table td a:hover {
+  color: var(--accent);
+}
+
+.td-date {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.td-empty {
+  color: var(--text-muted);
+}
+
+.td-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-sm {
+  padding: 4px 12px;
+  border-radius: 3px;
+  font-size: 0.78rem;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  transition: all 0.2s;
+}
+
+.admin-table .btn-sm-edit {
+  background: var(--bg-nav);
+  color: var(--text-on-dark);
+}
+
+.admin-table .btn-sm-edit:hover {
+  background: var(--btn-edit-hover);
+}
+
+.btn-sm-del {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+.btn-sm-del:hover {
+  background: var(--accent);
+  color: var(--text-on-dark);
+}
+
+.admin-drafts-header {
+  margin-top: 40px;
+}

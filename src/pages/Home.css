@@ -1,0 +1,223 @@
+.home {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 40px 24px 0;
+}
+
+.home-header {
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.home-header h1 {
+  font-size: 1.8rem;
+  color: var(--text-primary);
+  margin: 0 0 6px;
+  font-family: 'Georgia', serif;
+  font-weight: 400;
+}
+
+.home-subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+}
+
+/* Search bar */
+.home-search-bar {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.home-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.home-search-input {
+  width: 100%;
+  padding: 10px 36px 10px 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.home-search-input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.home-search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.home-search-clear {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.home-search-clear:hover {
+  color: var(--text-primary);
+}
+
+/* Tag filter row */
+.home-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+
+.home-tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.home-tag-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.home-tag-chip.active {
+  background: var(--accent);
+  color: var(--text-on-dark);
+  border-color: var(--accent);
+}
+
+.home-tag-count {
+  font-size: 0.7rem;
+  opacity: 0.6;
+}
+
+.home-tag-chip.active .home-tag-count {
+  opacity: 0.8;
+}
+
+/* Layout: main + sidebar */
+.home-layout {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.home-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.article-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* Sidebar */
+.home-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 72px;
+}
+
+.sidebar-section {
+  margin-bottom: 28px;
+}
+
+.sidebar-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+}
+
+.tag-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag-cloud-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tag-cloud-item:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.tag-cloud-item.active {
+  background: var(--accent);
+  color: var(--text-on-dark);
+  border-color: var(--accent);
+}
+
+.tag-cloud-count {
+  font-size: 0.68rem;
+  opacity: 0.5;
+}
+
+.tag-cloud-item.active .tag-cloud-count {
+  opacity: 0.8;
+}
+
+.sidebar-stat {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .home-sidebar {
+    display: none;
+  }
+  .home-layout {
+    display: block;
+  }
+}

@@ -1,0 +1,344 @@
+.article-detail {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 40px 24px 0;
+}
+
+.article-layout {
+  display: flex;
+  gap: 40px;
+  align-items: flex-start;
+}
+
+.article-layout > article {
+  flex: 1;
+  min-width: 0;
+  max-width: var(--content-width);
+}
+
+.back-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  display: inline-block;
+  margin-bottom: 28px;
+  transition: color 0.2s;
+}
+
+.back-link:hover {
+  color: var(--accent);
+}
+
+.detail-title {
+  font-size: 2rem;
+  color: var(--text-primary);
+  margin: 0 0 16px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.detail-meta {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+}
+
+.detail-date {
+  color: var(--text-muted);
+}
+
+.detail-tags {
+  display: flex;
+  gap: 6px;
+}
+
+/* ========== 渲染的富文本样式 ========== */
+.detail-content {
+  line-height: 1.9;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+}
+
+.detail-content p {
+  margin: 0 0 1em;
+}
+
+.detail-content h1 {
+  font-size: 1.7rem;
+  margin: 1.5em 0 0.5em;
+  color: var(--text-primary);
+}
+
+.detail-content h2 {
+  font-size: 1.35rem;
+  margin: 1.3em 0 0.4em;
+  color: var(--text-primary);
+}
+
+.detail-content h3 {
+  font-size: 1.15rem;
+  margin: 1em 0 0.3em;
+  color: var(--text-primary);
+}
+
+.detail-content blockquote {
+  border-left: 3px solid var(--accent);
+  margin: 1.2em 0;
+  padding: 0.6em 1.2em;
+  color: var(--text-secondary);
+  background: var(--accent-light);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.detail-content pre {
+  background: var(--bg-code);
+  color: var(--bg-code-text);
+  padding: 18px 20px;
+  border-radius: var(--radius);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  margin: 1.2em 0;
+}
+
+.detail-content code {
+  background: var(--bg-inline-code);
+  color: var(--accent);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.88em;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+}
+
+.detail-content pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+}
+
+.detail-content ul,
+.detail-content ol {
+  padding-left: 1.6em;
+  margin: 0.6em 0;
+}
+
+.detail-content li {
+  margin: 0.3em 0;
+}
+
+.detail-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  margin: 1.2em 0;
+  display: block;
+}
+
+.detail-content a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.detail-content a:hover {
+  color: var(--accent-hover);
+}
+
+.detail-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  font-size: 0.92rem;
+}
+
+.detail-content th,
+.detail-content td {
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+}
+
+.detail-content th {
+  background: var(--bg);
+  font-weight: 600;
+  text-align: left;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+}
+
+.detail-content hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2em 0;
+}
+
+.detail-content mark {
+  background: var(--bg-highlight);
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+/* ========== 代码块语法高亮 (One Dark) ========== */
+.detail-content pre code .hljs-comment,
+.detail-content pre code .hljs-quote {
+  color: #5c6370;
+  font-style: italic;
+}
+
+.detail-content pre code .hljs-keyword,
+.detail-content pre code .hljs-selector-tag {
+  color: #c678dd;
+}
+
+.detail-content pre code .hljs-string,
+.detail-content pre code .hljs-addition {
+  color: #98c379;
+}
+
+.detail-content pre code .hljs-number,
+.detail-content pre code .hljs-literal {
+  color: #d19a66;
+}
+
+.detail-content pre code .hljs-built_in,
+.detail-content pre code .hljs-type {
+  color: #e5c07b;
+}
+
+.detail-content pre code .hljs-function,
+.detail-content pre code .hljs-title {
+  color: #61afef;
+}
+
+.detail-content pre code .hljs-attr,
+.detail-content pre code .hljs-attribute {
+  color: #d19a66;
+}
+
+.detail-content pre code .hljs-variable,
+.detail-content pre code .hljs-template-variable {
+  color: #e06c75;
+}
+
+.detail-content pre code .hljs-regexp,
+.detail-content pre code .hljs-link {
+  color: #56b6c2;
+}
+
+.detail-content pre code .hljs-symbol,
+.detail-content pre code .hljs-bullet {
+  color: #61afef;
+}
+
+.detail-content pre code .hljs-meta {
+  color: #61afef;
+}
+
+.detail-content pre code .hljs-deletion {
+  color: #e06c75;
+}
+
+.detail-content pre code .hljs-selector-class,
+.detail-content pre code .hljs-selector-attr {
+  color: #d19a66;
+}
+
+.detail-content pre code .hljs-tag,
+.detail-content pre code .hljs-name {
+  color: #e06c75;
+}
+
+.detail-content pre code .hljs-params {
+  color: #abb2bf;
+}
+
+/* 代码块语言标签 */
+.detail-content pre {
+  position: relative;
+}
+
+.detail-content pre code::before {
+  content: attr(data-language);
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 0.7rem;
+  color: #5c6370;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+/* ========== 目录侧边栏 ========== */
+.toc-sidebar {
+  position: sticky;
+  top: 72px;
+  width: 200px;
+  flex-shrink: 0;
+  max-height: calc(100vh - 96px);
+  overflow-y: auto;
+}
+
+.toc-nav {
+  display: flex;
+  flex-direction: column;
+  border-left: 2px solid var(--border);
+  padding-left: 0;
+}
+
+.toc-link {
+  display: block;
+  padding: 4px 0 4px 14px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  line-height: 1.5;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  transition: color 0.2s;
+  border-left: 2px solid transparent;
+  margin-left: -2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.toc-link:hover {
+  color: var(--text-primary);
+}
+
+.toc-link.active {
+  color: var(--accent);
+  border-left-color: var(--accent);
+}
+
+.toc-level-3 {
+  padding-left: 28px;
+  font-size: 0.76rem;
+}
+
+@media (max-width: 1200px) {
+  .toc-sidebar {
+    display: none;
+  }
+
+  .article-layout {
+    display: block;
+  }
+
+  .article-layout > article {
+    max-width: none;
+  }
+}
+
+/* ========== 底部操作 ========== */
+.detail-actions {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
