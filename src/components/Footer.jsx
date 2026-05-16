@@ -12,7 +12,7 @@ export default function Footer() {
           <span className="footer-copy">&copy; {year}</span>
         </div>
         <div className="footer-right">
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="https://github.com/enumerater" target="_blank" rel="noopener noreferrer">GitHub</a>
         </div>
       </div>
     </footer>
