@@ -1,4 +1,6 @@
-const BASE_URL = 'http://localhost:3001/api';
+// const BASE_URL = 'http://localhost:3001/api';
+
+const BASE_URL = '/api';
 
 function getToken() {
   return localStorage.getItem('eblog_token');
