@@ -8,6 +8,25 @@
   margin-bottom: 32px;
   padding-bottom: 24px;
   border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+}
+
+.home-header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+}
+
+.home-header-content {
+  position: relative;
+  z-index: 1;
 }
 
 .home-header h1 {
@@ -22,6 +41,18 @@
   color: var(--text-muted);
   font-size: 0.9rem;
   font-family: 'Noto Sans SC', system-ui, sans-serif;
+}
+
+.typewriter-cursor {
+  display: inline-block;
+  margin-left: 2px;
+  color: var(--accent);
+  animation: blink 1s step-end infinite;
+  font-weight: 300;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
 }
 
 /* Search bar */

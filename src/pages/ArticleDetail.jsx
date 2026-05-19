@@ -26,6 +26,7 @@ import nginx from 'highlight.js/lib/languages/nginx';
 import lua from 'highlight.js/lib/languages/lua';
 import perl from 'highlight.js/lib/languages/perl';
 import Footer from '../components/Footer';
+import ReadingProgress from '../components/effects/ReadingProgress';
 import api, { auth } from '../api';
 import './ArticleDetail.css';
 
@@ -166,6 +167,7 @@ export default function ArticleDetail() {
 
   return (
     <>
+      <ReadingProgress />
       <div className="article-detail">
         <Link to="/" className="back-link">返回首页</Link>
         <div className="article-layout">

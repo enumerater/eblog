@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import ArticleCard from '../components/ArticleCard';
 import Footer from '../components/Footer';
+import ParticleBg from '../components/effects/ParticleBg';
+import Typewriter from '../components/effects/Typewriter';
+import MouseGlow from '../components/effects/MouseGlow';
 import api from '../api';
 import './Home.css';
 
@@ -54,8 +57,19 @@ export default function Home() {
     <>
       <div className="home">
         <header className="home-header">
-          <h1>随便写写</h1>
-          <p className="home-subtitle">技术笔记 / 生活记录</p>
+          <div className="home-header-bg">
+            <ParticleBg />
+          </div>
+          <div className="home-header-content">
+            <h1>随便写写</h1>
+            <p className="home-subtitle">
+              <Typewriter
+                texts={['技术笔记 / 生活记录', '保持思考，持续输出', '记录每一个灵感']}
+                speed={80}
+                pause={2500}
+              />
+            </p>
+          </div>
         </header>
 
         <div className="home-search-bar">
@@ -101,9 +115,11 @@ export default function Home() {
               </p>
             ) : (
               <div className="article-list">
-                {articles.map(article => (
-                  <ArticleCard key={article.id} article={article} />
-                ))}
+                <MouseGlow color="rgba(192,57,43,0.06)" size="300">
+                  {articles.map(article => (
+                    <ArticleCard key={article.id} article={article} />
+                  ))}
+                </MouseGlow>
               </div>
             )}
           </main>
