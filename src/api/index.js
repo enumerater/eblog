@@ -106,6 +106,21 @@ export const api = {
       body: JSON.stringify(data),
     });
   },
+
+  getComments(articleId) {
+    return request(`/articles/${articleId}/comments`);
+  },
+  createComment(articleId, data) {
+    return request(`/articles/${articleId}/comments`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+  deleteComment(articleId, id) {
+    return request(`/articles/${articleId}/comments/${id}`, {
+      method: 'DELETE',
+    });
+  },
 };
 
 export default api;

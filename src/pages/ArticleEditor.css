@@ -184,3 +184,33 @@
 .btn-draft:hover {
   background: var(--bg-toolbar-hover);
 }
+
+@media (max-width: 768px) {
+  .editor-page {
+    padding: 24px 16px !important;
+  }
+
+  .editor-page h1 {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+  }
+
+  .editor-layout {
+    gap: 0;
+  }
+
+  .editor-content {
+    padding: 12px 14px !important;
+    min-height: 300px !important;
+    max-height: 60vh !important;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+}

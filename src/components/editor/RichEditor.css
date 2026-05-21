@@ -188,6 +188,24 @@
   overflow: hidden;
 }
 
+@media (max-width: 768px) {
+  .editor-content .ProseMirror table {
+    display: block;
+    max-width: 100%;
+    width: max-content;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    font-size: 0.85rem;
+  }
+
+  .editor-content .ProseMirror td,
+  .editor-content .ProseMirror th {
+    padding: 6px 8px;
+    min-width: 50px;
+    white-space: nowrap;
+  }
+}
+
 .editor-content .ProseMirror td,
 .editor-content .ProseMirror th {
   border: 1px solid var(--border);

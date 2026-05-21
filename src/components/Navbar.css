@@ -23,12 +23,21 @@
   margin-right: 40px;
   font-family: 'Georgia', serif;
   letter-spacing: 0.02em;
+  flex-shrink: 0;
 }
 
 .navbar-links {
   display: flex;
   gap: 4px;
   flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.navbar-links::-webkit-scrollbar {
+  display: none;
 }
 
 .navbar-links a {
@@ -39,6 +48,7 @@
   padding: 6px 14px;
   border-radius: 4px;
   transition: color 0.2s, background 0.2s;
+  white-space: nowrap;
 }
 
 .navbar-links a:hover {

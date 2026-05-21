@@ -35,3 +35,11 @@
 .footer-right a:hover {
   color: var(--accent);
 }
+
+@media (max-width: 600px) {
+  .footer-inner {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+}

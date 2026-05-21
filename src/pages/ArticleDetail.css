@@ -1,7 +1,7 @@
 .article-detail {
   max-width: 1060px;
   margin: 0 auto;
-  padding: 40px 24px 0;
+  padding: 40px 24px 60px;
 }
 
 .article-layout {
@@ -158,6 +158,28 @@
   border-collapse: collapse;
   margin: 1.2em 0;
   font-size: 0.92rem;
+}
+
+@media (max-width: 768px) {
+  .detail-content table {
+    display: block;
+    max-width: 100%;
+    width: max-content;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    font-size: 0.85rem;
+  }
+
+  .detail-content th,
+  .detail-content td {
+    padding: 8px 10px;
+    white-space: nowrap;
+  }
+
+  .detail-content table table {
+    /* 避免嵌套表格滚动冲突 */
+    width: auto;
+  }
 }
 
 .detail-content th,
@@ -341,4 +363,31 @@
   margin-top: 40px;
   padding-top: 24px;
   border-top: 1px solid var(--border);
+}
+
+@media (max-width: 768px) {
+  .article-detail {
+    padding: 24px 16px 0 !important;
+  }
+
+  .detail-title {
+    font-size: 1.4rem;
+  }
+
+  .detail-content {
+    font-size: 0.95rem;
+  }
+
+  .detail-content h2 {
+    font-size: 1.15rem;
+  }
+
+  .detail-content h3 {
+    font-size: 1.05rem;
+  }
+
+  .detail-content pre {
+    padding: 14px 16px;
+    font-size: 0.82rem;
+  }
 }

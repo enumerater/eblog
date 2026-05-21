@@ -26,6 +26,7 @@ import nginx from 'highlight.js/lib/languages/nginx';
 import lua from 'highlight.js/lib/languages/lua';
 import perl from 'highlight.js/lib/languages/perl';
 import Footer from '../components/Footer';
+import CommentSection from '../components/CommentSection';
 import ReadingProgress from '../components/effects/ReadingProgress';
 import api, { auth } from '../api';
 import './ArticleDetail.css';
@@ -210,6 +211,7 @@ export default function ArticleDetail() {
             <Link to={`/editor?id=${article.id}`} className="btn btn-edit">编辑文章</Link>
           </div>
         )}
+        <CommentSection articleId={article.id} />
       </div>
       <Footer />
     </>

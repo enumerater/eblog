@@ -239,3 +239,20 @@ img {
   font-family: 'Noto Sans SC', system-ui, sans-serif;
   border: 1px solid var(--border);
 }
+
+/* ========== 全局移动端适配 ========== */
+@media (max-width: 768px) {
+  .main-content {
+    min-height: calc(100vh - 48px);
+  }
+
+  .navbar-brand {
+    margin-right: 16px !important;
+    font-size: 1rem !important;
+  }
+
+  .navbar-links a {
+    padding: 6px 10px !important;
+    font-size: 0.82rem !important;
+  }
+}

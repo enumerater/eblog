@@ -62,42 +62,44 @@ export default function Admin() {
 
       {articles.length === 0 && <p className="empty">还没有文章</p>}
 
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>标题</th>
-            <th>标签</th>
-            <th>创建时间</th>
-            <th>操作</th>
-          </tr>
-        </thead>
-        <tbody>
-          {articles.map(article => (
-            <tr key={article.id}>
-              <td>
-                <Link to={`/article/${article.id}`}>{article.title}</Link>
-              </td>
-              <td>
-                {article.tags?.length > 0
-                  ? article.tags.map(t => <span key={t} className="tag">{t}</span>)
-                  : <span className="td-empty">-</span>}
-              </td>
-              <td className="td-date">
-                {new Date(article.createdAt).toLocaleDateString('zh-CN')}
-              </td>
-              <td className="td-actions">
-                <Link to={`/editor?id=${article.id}`} className="btn-sm btn-sm-edit">编辑</Link>
-                <button
-                  className="btn-sm btn-sm-del"
-                  onClick={() => handleDelete(article.id, article.title)}
-                >
-                  删除
-                </button>
-              </td>
+      <div className="admin-table-wrap">
+        <table className="admin-table">
+          <thead>
+            <tr>
+              <th>标题</th>
+              <th>标签</th>
+              <th>创建时间</th>
+              <th>操作</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {articles.map(article => (
+              <tr key={article.id}>
+                <td data-label="标题">
+                  <Link to={`/article/${article.id}`}>{article.title}</Link>
+                </td>
+                <td data-label="标签">
+                  {article.tags?.length > 0
+                    ? article.tags.map(t => <span key={t} className="tag">{t}</span>)
+                    : <span className="td-empty">-</span>}
+                </td>
+                <td className="td-date" data-label="创建时间">
+                  {new Date(article.createdAt).toLocaleDateString('zh-CN')}
+                </td>
+                <td className="td-actions" data-label="操作">
+                  <Link to={`/editor?id=${article.id}`} className="btn-sm btn-sm-edit">编辑</Link>
+                  <button
+                    className="btn-sm btn-sm-del"
+                    onClick={() => handleDelete(article.id, article.title)}
+                  >
+                    删除
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       <div className="admin-header admin-drafts-header">
         <h1>草稿箱</h1>
@@ -112,34 +114,36 @@ export default function Admin() {
         ) : drafts.length === 0 ? (
           <p className="empty">暂无草稿</p>
         ) : (
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>标题</th>
-                <th>更新时间</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              {drafts.map(draft => (
-                <tr key={draft.id}>
-                  <td>{draft.title || '(无标题)'}</td>
-                  <td className="td-date">
-                    {new Date(draft.updatedAt).toLocaleDateString('zh-CN')}
-                  </td>
-                  <td className="td-actions">
-                    <Link to={`/editor?draftId=${draft.id}`} className="btn-sm btn-sm-edit">编辑</Link>
-                    <button
-                      className="btn-sm btn-sm-del"
-                      onClick={() => handleDeleteDraft(draft.id, draft.title)}
-                    >
-                      删除
-                    </button>
-                  </td>
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>标题</th>
+                  <th>更新时间</th>
+                  <th>操作</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {drafts.map(draft => (
+                  <tr key={draft.id}>
+                    <td data-label="标题">{draft.title || '(无标题)'}</td>
+                    <td className="td-date" data-label="更新时间">
+                      {new Date(draft.updatedAt).toLocaleDateString('zh-CN')}
+                    </td>
+                    <td className="td-actions" data-label="操作">
+                      <Link to={`/editor?draftId=${draft.id}`} className="btn-sm btn-sm-edit">编辑</Link>
+                      <button
+                        className="btn-sm btn-sm-del"
+                        onClick={() => handleDeleteDraft(draft.id, draft.title)}
+                      >
+                        删除
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )
       )}
     </div>
