@@ -7,7 +7,7 @@ import './ArticleEditor.css';
 function parseToc(html) {
   if (!html) return [];
   const doc = new DOMParser().parseFromString(html, 'text/html');
-  const headings = doc.querySelectorAll('h2, h3');
+  const headings = doc.querySelectorAll('h1, h2, h3');
   const usedIds = new Set();
   return Array.from(headings).map(h => {
     const text = h.textContent.trim();
@@ -15,7 +15,7 @@ function parseToc(html) {
     let id = base, c = 1;
     while (usedIds.has(id)) id = `${base}-${c++}`;
     usedIds.add(id);
-    return { id, text, level: h.tagName === 'H2' ? 2 : 3 };
+    return { id, text, level: h.tagName === 'H1' ? 1 : h.tagName === 'H2' ? 2 : 3 };
   });
 }
 

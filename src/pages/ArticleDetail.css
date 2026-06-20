@@ -341,6 +341,11 @@
   border-left-color: var(--accent);
 }
 
+.toc-level-1 {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
 .toc-level-3 {
   padding-left: 28px;
   font-size: 0.76rem;
