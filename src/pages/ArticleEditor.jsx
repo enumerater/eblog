@@ -43,6 +43,11 @@ export default function ArticleEditor() {
   const isDirtyRef = useRef(false);
   const saveStatusTimerRef = useRef(null);
 
+  const uploadImage = useCallback(async (file) => {
+    const result = await api.uploadImage(file);
+    return result.url;
+  }, []);
+
   // Load draft or article on mount
   useEffect(() => {
     if (draftIdParam) {
@@ -344,7 +349,7 @@ export default function ArticleEditor() {
           </div>
           <div className="form-group">
             <label>内容</label>
-            <RichEditor content={content} onChange={setContent} />
+            <RichEditor content={content} onChange={setContent} onUploadImage={uploadImage} />
           </div>
           <div className="form-actions">
             <button type="button" className="btn btn-draft" onClick={handleSaveDraft}>

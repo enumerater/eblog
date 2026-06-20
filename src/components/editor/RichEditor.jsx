@@ -14,7 +14,6 @@ import Highlight from '@tiptap/extension-highlight';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { common, createLowlight } from 'lowlight';
 import { marked } from 'marked';
-import { api } from '../../api';
 import codeBlockNodeView from './CodeBlockView';
 import EditorBubbleMenu from './BubbleMenu';
 import SlashCommands from './SlashCommands';
@@ -83,37 +82,10 @@ const I = {
   redo: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>,
 };
 
-export default function RichEditor({ content, onChange }) {
+export default function RichEditor({ content, onChange, onUploadImage }) {
   const fileInputRef = useRef(null);
   const imageInputRef = useRef(null);
   const [uploadingImages, setUploadingImages] = useState(false);
-  const editorRef = useRef(null);
-
-  const uploadAndInsertImage = useCallback(async (file) => {
-    if (!editorRef.current) return;
-    setUploadingImages(true);
-    try {
-      const result = await api.uploadImage(file);
-      const url = result.url;
-      editorRef.current.chain().focus().setImage({ src: url }).run();
-    } catch (err) {
-      alert('图片上传失败: ' + (err.message || '未知错误'));
-    } finally {
-      setUploadingImages(false);
-    }
-  }, []);
-
-  const handleImageFileChange = useCallback((e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    uploadAndInsertImage(file);
-    e.target.value = '';
-  }, [uploadAndInsertImage]);
-
-  // Sync editorRef when editor changes
-  useEffect(() => {
-    editorRef.current = editor;
-  }, [editor]);
 
   const editor = useEditor({
     extensions: [
@@ -139,6 +111,27 @@ export default function RichEditor({ content, onChange }) {
       onChange(editor.getHTML());
     },
   });
+
+  // Upload handlers (defined after editor to avoid TDZ)
+  const uploadAndInsertImage = useCallback(async (file) => {
+    if (!editor || !onUploadImage) return;
+    setUploadingImages(true);
+    try {
+      const url = await onUploadImage(file);
+      editor.chain().focus().setImage({ src: url }).run();
+    } catch (err) {
+      alert('图片上传失败: ' + (err.message || '未知错误'));
+    } finally {
+      setUploadingImages(false);
+    }
+  }, [editor, onUploadImage]);
+
+  const handleImageFileChange = useCallback((e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    uploadAndInsertImage(file);
+    e.target.value = '';
+  }, [uploadAndInsertImage]);
 
   // Capture-phase paste: intercept before ProseMirror
   useEffect(() => {
