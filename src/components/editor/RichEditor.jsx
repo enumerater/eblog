@@ -1,4 +1,4 @@
-import { useCallback, useRef, useEffect } from 'react';
+import { useCallback, useRef, useState, useEffect } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
@@ -14,6 +14,7 @@ import Highlight from '@tiptap/extension-highlight';
 import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import { common, createLowlight } from 'lowlight';
 import { marked } from 'marked';
+import { api } from '../../api';
 import codeBlockNodeView from './CodeBlockView';
 import EditorBubbleMenu from './BubbleMenu';
 import SlashCommands from './SlashCommands';
@@ -84,6 +85,35 @@ const I = {
 
 export default function RichEditor({ content, onChange }) {
   const fileInputRef = useRef(null);
+  const imageInputRef = useRef(null);
+  const [uploadingImages, setUploadingImages] = useState(false);
+  const editorRef = useRef(null);
+
+  const uploadAndInsertImage = useCallback(async (file) => {
+    if (!editorRef.current) return;
+    setUploadingImages(true);
+    try {
+      const result = await api.uploadImage(file);
+      const url = result.url;
+      editorRef.current.chain().focus().setImage({ src: url }).run();
+    } catch (err) {
+      alert('图片上传失败: ' + (err.message || '未知错误'));
+    } finally {
+      setUploadingImages(false);
+    }
+  }, []);
+
+  const handleImageFileChange = useCallback((e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    uploadAndInsertImage(file);
+    e.target.value = '';
+  }, [uploadAndInsertImage]);
+
+  // Sync editorRef when editor changes
+  useEffect(() => {
+    editorRef.current = editor;
+  }, [editor]);
 
   const editor = useEditor({
     extensions: [
@@ -115,6 +145,15 @@ export default function RichEditor({ content, onChange }) {
     if (!editor) return;
 
     const handlePaste = (event) => {
+      // Check for image files first (screenshots, copied images)
+      const imageFiles = Array.from(event.clipboardData?.files || []).filter(f => f.type.startsWith('image/'));
+      if (imageFiles.length > 0) {
+        event.preventDefault();
+        event.stopPropagation();
+        imageFiles.forEach(file => uploadAndInsertImage(file));
+        return;
+      }
+
       const text = event.clipboardData?.getData('text/plain');
       if (!text || !text.trim()) return;
       if (!looksLikeMarkdown(text)) return;
@@ -138,15 +177,24 @@ export default function RichEditor({ content, onChange }) {
     const editorEl = editor.view.dom;
     editorEl.addEventListener('paste', handlePaste, true);
     return () => editorEl.removeEventListener('paste', handlePaste, true);
-  }, [editor]);
+  }, [editor, uploadAndInsertImage]);
 
-  // Drop .md files
+  // Drop .md files and images
   useEffect(() => {
     if (!editor) return;
 
     const handleDrop = (event) => {
       const files = event.dataTransfer?.files;
       if (!files?.length) return;
+
+      // Check for image files first
+      const imgFile = Array.from(files).find(f => f.type.startsWith('image/'));
+      if (imgFile) {
+        event.preventDefault();
+        event.stopPropagation();
+        uploadAndInsertImage(imgFile);
+        return;
+      }
 
       const mdFile = Array.from(files).find(f =>
         f.name.endsWith('.md') || f.name.endsWith('.markdown') || f.type === 'text/markdown'
@@ -176,7 +224,7 @@ export default function RichEditor({ content, onChange }) {
       editorEl.removeEventListener('drop', handleDrop, true);
       editorEl.removeEventListener('dragover', handleDragOver);
     };
-  }, [editor]);
+  }, [editor, uploadAndInsertImage]);
 
   const handleImportMd = useCallback(() => {
     fileInputRef.current?.click();
@@ -196,12 +244,13 @@ export default function RichEditor({ content, onChange }) {
 
   if (!editor) return null;
 
-  const ToolBtn = ({ onClick, active, title, children }) => (
+  const ToolBtn = ({ onClick, active, title, children, ...rest }) => (
     <button
       type="button"
       onClick={onClick}
       className={`toolbar-btn ${active ? 'active' : ''}`}
       title={title}
+      {...rest}
     >
       {children}
     </button>
@@ -215,6 +264,13 @@ export default function RichEditor({ content, onChange }) {
         accept=".md,.markdown"
         style={{ display: 'none' }}
         onChange={handleFileChange}
+      />
+      <input
+        ref={imageInputRef}
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={handleImageFileChange}
       />
 
       <div className="toolbar">
@@ -290,8 +346,17 @@ export default function RichEditor({ content, onChange }) {
           <ToolBtn onClick={() => editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()} active={editor.isActive('table')} title="插入表格">
             {I.table}
           </ToolBtn>
-          <ToolBtn onClick={() => { const url = window.prompt('输入图片链接'); if (url) editor.chain().focus().setImage({ src: url }).run(); }} title="插入图片">
+          <ToolBtn
+            onClick={() => imageInputRef.current?.click()}
+            onContextMenu={(e) => {
+              e.preventDefault();
+              const url = window.prompt('输入图片链接');
+              if (url) editor.chain().focus().setImage({ src: url }).run();
+            }}
+            title="左键上传图片，右键输入URL"
+          >
             {I.image}
+            {uploadingImages && <span className="toolbar-uploading" />}
           </ToolBtn>
         </div>
 

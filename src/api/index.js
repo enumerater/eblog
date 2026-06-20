@@ -7,13 +7,19 @@ function getToken() {
 }
 
 async function request(url, options = {}) {
-  const headers = { 'Content-Type': 'application/json' };
+  const headers = {};
+  // Only set Content-Type for non-FormData requests (let browser set multipart boundary)
+  if (!(options.body instanceof FormData)) {
+    headers['Content-Type'] = 'application/json';
+  }
   const token = getToken();
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const config = { headers, ...options };
+  // Merge caller-provided headers (e.g. {}) without losing ours
+  const mergedHeaders = { ...headers, ...options.headers };
+  const config = { ...options, headers: mergedHeaders };
   const res = await fetch(`${BASE_URL}${url}`, config);
   if (!res.ok) {
     if (res.status === 401) {
@@ -119,6 +125,16 @@ export const api = {
   deleteComment(articleId, id) {
     return request(`/articles/${articleId}/comments/${id}`, {
       method: 'DELETE',
+    });
+  },
+
+  uploadImage(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return request('/upload/image', {
+      method: 'POST',
+      body: formData,
+      headers: {}, // will merge with auth header; no Content-Type so browser sets multipart boundary
     });
   },
 };

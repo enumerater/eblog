@@ -64,6 +64,8 @@
   line-height: 1.9;
   color: var(--text-primary);
   font-size: 1.05rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .detail-content p {
