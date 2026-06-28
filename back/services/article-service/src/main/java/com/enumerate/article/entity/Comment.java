@@ -1,4 +1,4 @@
-package com.enumerate.article.Entity;
+package com.enumerate.article.entity;
 
 import java.time.LocalDateTime;
 

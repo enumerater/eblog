@@ -1,7 +1,7 @@
-package com.enumerate.article.Controller;
+package com.enumerate.article.controller;
 
-import com.enumerate.article.Entity.Comment;
-import com.enumerate.article.Service.CommentService;
+import com.enumerate.article.entity.Comment;
+import com.enumerate.article.service.CommentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

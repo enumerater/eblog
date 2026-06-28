@@ -1,6 +1,6 @@
-package com.enumerate.article.Mapper;
+package com.enumerate.article.mapper;
 
-import com.enumerate.article.Entity.Article;
+import com.enumerate.article.entity.Article;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

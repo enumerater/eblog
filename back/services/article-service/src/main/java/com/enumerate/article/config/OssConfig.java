@@ -1,4 +1,4 @@
-package com.enumerate.article.Config;
+package com.enumerate.article.config;
 
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;

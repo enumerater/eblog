@@ -1,8 +1,8 @@
-package com.enumerate.article.Service;
+package com.enumerate.article.service;
 
-import com.enumerate.article.Entity.Article;
-import com.enumerate.article.Mapper.ArticleMapper;
-import com.enumerate.article.Mapper.CommentMapper;
+import com.enumerate.article.entity.Article;
+import com.enumerate.article.mapper.ArticleMapper;
+import com.enumerate.article.mapper.CommentMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

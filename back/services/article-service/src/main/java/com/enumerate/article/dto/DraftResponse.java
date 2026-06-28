@@ -1,6 +1,6 @@
-package com.enumerate.article.DTO;
+package com.enumerate.article.dto;
 
-import com.enumerate.article.Entity.Draft;
+import com.enumerate.article.entity.Draft;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;

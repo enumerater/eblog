@@ -1,8 +1,8 @@
-package com.enumerate.article.Controller;
+package com.enumerate.article.controller;
 
-import com.enumerate.article.DTO.ArticleResponse;
-import com.enumerate.article.Entity.Article;
-import com.enumerate.article.Service.ArticleService;
+import com.enumerate.article.dto.ArticleResponse;
+import com.enumerate.article.entity.Article;
+import com.enumerate.article.service.ArticleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

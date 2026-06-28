@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.enumerate.article.mapper.DraftMapper">
 
-    <resultMap id="draftResultMap" type="com.enumerate.back.Entity.Draft">
+    <resultMap id="draftResultMap" type="com.enumerate.article.entity.Draft">
         <id property="id" column="id"/>
         <result property="title" column="title"/>
         <result property="content" column="content"/>

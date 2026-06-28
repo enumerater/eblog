@@ -1,7 +1,7 @@
-package com.enumerate.article.Controller;
+package com.enumerate.article.controller;
 
 import com.aliyun.oss.OSS;
-import com.enumerate.article.Config.OssConfig;
+import com.enumerate.article.config.OssConfig;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

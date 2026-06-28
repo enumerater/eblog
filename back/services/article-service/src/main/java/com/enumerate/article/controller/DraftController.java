@@ -1,11 +1,11 @@
-package com.enumerate.article.Controller;
+package com.enumerate.article.controller;
 
-import com.enumerate.article.DTO.ArticleResponse;
-import com.enumerate.article.DTO.DraftResponse;
-import com.enumerate.article.Entity.Article;
-import com.enumerate.article.Entity.Draft;
-import com.enumerate.article.Service.ArticleService;
-import com.enumerate.article.Service.DraftService;
+import com.enumerate.article.dto.ArticleResponse;
+import com.enumerate.article.dto.DraftResponse;
+import com.enumerate.article.entity.Article;
+import com.enumerate.article.entity.Draft;
+import com.enumerate.article.service.ArticleService;
+import com.enumerate.article.service.DraftService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
