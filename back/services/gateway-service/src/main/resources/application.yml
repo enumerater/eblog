@@ -1,0 +1,102 @@
+server:
+  port: 8080
+
+spring:
+  config:
+    import: "optional:configserver:"
+
+  cloud:
+    gateway:
+      default-filters:
+        - name: RequestRateLimiter
+          args:
+            redis-rate-limiter:
+              replenishRate: 100
+              burstCapacity: 200
+              requestedTokens: 1
+
+      routes:
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=0
+
+        - id: article-service
+          uri: lb://article-service
+          predicates:
+            - Path=/api/articles/**
+          filters:
+            - name: JwtAuth
+              args:
+                publicPaths: >
+                  GET:/api/articles,
+                  GET:/api/articles/**
+              excludedPaths: >
+                GET:/api/articles/list
+
+        - id: article-query-service
+          uri: lb://article-query-service
+          predicates:
+            - Path=/api/articles-query/**
+
+        - id: comment-service
+          uri: lb://comment-service
+          predicates:
+            - Path=/api/comments/**
+          filters:
+            - StripPrefix=0
+
+        - id: search-service
+          uri: lb://search-service
+          predicates:
+            - Path=/api/search/**
+
+        - id: file-service
+          uri: lb://file-service
+          predicates:
+            - Path=/api/files/**,/api/upload/**
+          filters:
+            - name: JwtAuth
+              args:
+                publicPaths: >
+                  GET:/api/files/**
+
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+
+    nacos:
+      discovery:
+        enabled: false
+
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      timeout: 3000
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 4
+
+sentinel:
+  enabled: false
+  transport:
+    dashboard: ${SENTINEL_DASHBOARD:127.0.0.1:8718}
+    port: 8719
+
+jwt:
+  public-key: ${JWT_PUBLIC_KEY:}
+  cache-ttl-seconds: 60
+
+logging:
+  level:
+    com.enumerate: DEBUG

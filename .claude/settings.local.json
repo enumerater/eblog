@@ -8,7 +8,15 @@
       "Bash(node *)",
       "Bash(npm ls *)",
       "Bash(npx vite *)",
-      "Bash(mysql *)"
+      "Bash(mysql *)",
+      "Bash(java -version)",
+      "Bash(mvn -v)",
+      "Bash(docker -v)",
+      "Bash(docker compose *)",
+      "Bash(mvn compile *)",
+      "Bash(mvn clean *)",
+      "Bash(timeout 60 mvn spring-boot:run -DskipTests)",
+      "Bash(redis-cli ping *)"
     ]
   }
 }

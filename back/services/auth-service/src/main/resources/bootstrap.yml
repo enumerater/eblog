@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: auth-service
+  cloud:
+    nacos:
+      config:
+        import-check:
+          enabled: false
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: DEFAULT_GROUP
+        file-extension: yml
+        shared-configs:
+          - data-id: application-${spring.cloud.nacos.config.namespace}.yml
+            group: DEFAULT_GROUP
+            refresh: true
+      discovery:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: DEFAULT_GROUP
+
+---
+# ── local 配置: 不使用 Nacos，直接本地启动 ──
+spring:
+  config:
+    activate:
+      on-profile: local
+  cloud:
+    nacos:
+      config:
+        enabled: false
+        import-check:
+          enabled: false
+      discovery:
+        enabled: false

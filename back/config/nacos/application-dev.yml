@@ -1,0 +1,49 @@
+# ============================================================================
+# Nacos 共享配置 (所有服务通用)
+# Data ID: application-dev.yml
+# Group: DEFAULT_GROUP
+# ============================================================================
+
+spring:
+  # 通用数据源配置 (各服务可覆盖)
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 300000
+      connection-timeout: 5000
+
+  # 通用 Redis 配置
+  data:
+    redis:
+      host: ${REDIS_HOST:127.0.0.1}
+      port: ${REDIS_PORT:6379}
+      timeout: 3000
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 4
+
+# 通用 MyBatis-Plus 配置
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: is_deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# Seata 配置 (后续启用)
+seata:
+  enabled: false
+  tx-service-group: blog_tx_group
+  service:
+    vgroup-mapping:
+      blog_tx_group: default
+    grouplist:
+      default: ${SEATA_ADDR:127.0.0.1:8091}

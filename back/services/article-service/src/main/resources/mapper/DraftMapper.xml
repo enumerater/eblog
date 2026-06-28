@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enumerate.article.mapper.DraftMapper">
+
+    <resultMap id="draftResultMap" type="com.enumerate.back.Entity.Draft">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="tagsJson" column="tags_json"/>
+        <result property="summary" column="summary"/>
+        <result property="articleId" column="article_id"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="draftResultMap">
+        SELECT id, title, content, tags_json, summary, article_id, created_at, updated_at
+        FROM drafts
+        ORDER BY updated_at DESC
+    </select>
+
+    <select id="findById" resultMap="draftResultMap">
+        SELECT id, title, content, tags_json, summary, article_id, created_at, updated_at
+        FROM drafts
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO drafts (title, content, tags_json, summary, article_id, created_at, updated_at)
+        VALUES (#{title}, #{content}, #{tagsJson}, #{summary}, #{articleId}, NOW(), NOW())
+    </insert>
+
+    <update id="update">
+        UPDATE drafts
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="tagsJson != null">tags_json = #{tagsJson},</if>
+            <if test="summary != null">summary = #{summary},</if>
+            <if test="articleId != null">article_id = #{articleId},</if>
+            updated_at = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM drafts WHERE id = #{id}
+    </delete>
+
+</mapper>

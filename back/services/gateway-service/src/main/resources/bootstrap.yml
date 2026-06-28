@@ -1,0 +1,22 @@
+# ────────────────────────────────────────────────────────────────────────────
+# Gateway — Nacos 配置中心启动引导
+# ────────────────────────────────────────────────────────────────────────────
+spring:
+  application:
+    name: gateway-service
+  cloud:
+    nacos:
+      config:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: DEFAULT_GROUP
+        file-extension: yml
+        # 共享配置: 所有服务通用 (数据源, redis, 公共)
+        shared-configs:
+          - data-id: application-${spring.cloud.nacos.config.namespace}.yml
+            group: DEFAULT_GROUP
+            refresh: true
+      discovery:
+        server-addr: ${NACOS_ADDR:127.0.0.1:8848}
+        namespace: ${NACOS_NAMESPACE:dev}
+        group: DEFAULT_GROUP
