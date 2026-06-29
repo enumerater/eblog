@@ -13,6 +13,7 @@
   display: flex;
   align-items: center;
   height: 56px;
+  position: relative;
 }
 
 .navbar-brand {
@@ -122,6 +123,7 @@
   gap: 4px;
   font-family: 'Noto Sans SC', system-ui, sans-serif;
   transition: color 0.2s, background 0.2s;
+  white-space: nowrap;
 }
 
 .bell-icon {
@@ -157,8 +159,8 @@
 .notification-dropdown {
   position: absolute;
   top: 100%;
-  right: 0;
-  width: 300px;
+  right: 24px;
+  width: 320px;
   max-height: 400px;
   overflow-y: auto;
   background: var(--bg-card);
@@ -166,7 +168,7 @@
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0,0,0,0.15);
   z-index: 200;
-  margin-top: 4px;
+  margin-top: -12px;
 }
 
 .notification-dropdown-header {
