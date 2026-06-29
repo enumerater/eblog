@@ -10,7 +10,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -24,11 +23,11 @@ import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
 import java.security.PublicKey;
-import java.time.Duration;
 import java.util.List;
 
 /**
@@ -101,56 +100,27 @@ public class JwtAuthGatewayFilterFactory
                 return unauthorized(response, ResultCode.UNAUTHORIZED);
             }
 
-            // 4. 验证 Token
-            try {
-                // 4a. 确保公钥已加载
-                if (publicKey == null) {
-                    log.error("JWT 公钥未配置, 请求被拒绝");
-                    return unauthorized(response, ResultCode.SERVICE_UNAVAILABLE);
-                }
+            // 4. 确保公钥已加载
+            if (publicKey == null) {
+                log.error("JWT 公钥未配置, 请求被拒绝");
+                return unauthorized(response, ResultCode.SERVICE_UNAVAILABLE);
+            }
 
-                // 4b. 验签
+            // 5. 验签 + 解析 Payload
+            final Claims claims;
+            try {
                 Jws<Claims> jws = Jwts.parser()
                         .verifyWith(publicKey)
                         .build()
                         .parseSignedClaims(token);
 
-                Claims claims = jws.getPayload();
+                claims = jws.getPayload();
 
-                // 4c. 检查过期 (双重保险)
+                // 5a. 检查过期
                 if (claims.getExpiration().getTime() < System.currentTimeMillis()) {
                     log.warn("Token 已过期: sub={}", claims.getSubject());
                     return unauthorized(response, ResultCode.TOKEN_EXPIRED);
                 }
-
-                // 4d. 检查 Token 黑名单 (Redis)
-                String jti = claims.getId();
-                if (jti != null) {
-                    Boolean isBlacklisted = redisTemplate
-                            .opsForValue()
-                            .get(CommonConstants.REDIS_KEY_TOKEN_BLACKLIST + jti)
-                            .hasElement()
-                            .block(Duration.ofMillis(200));
-
-                    if (Boolean.TRUE.equals(isBlacklisted)) {
-                        log.warn("Token 已被吊销: jti={}", jti);
-                        return unauthorized(response, ResultCode.TOKEN_BLACKLISTED);
-                    }
-                }
-
-                // 5. 通过 → 设置用户信息到请求头
-                ServerHttpRequest mutatedRequest = request.mutate()
-                        .header(CommonConstants.HEADER_USER_ID, claims.getSubject())
-                        .header(CommonConstants.HEADER_USER_ROLE,
-                                claims.get("role", String.class))
-                        .header(CommonConstants.HEADER_TRACE_ID, jti)
-                        .build();
-
-                log.debug("Token 验证通过: userId={}, path={}",
-                        claims.getSubject(), path);
-
-                return chain.filter(exchange.mutate().request(mutatedRequest).build());
-
             } catch (SignatureException e) {
                 log.warn("Token 签名无效: {}", e.getMessage());
                 return unauthorized(response, ResultCode.TOKEN_INVALID);
@@ -161,7 +131,50 @@ public class JwtAuthGatewayFilterFactory
                 log.error("Token 验证异常: ", e);
                 return unauthorized(response, ResultCode.TOKEN_INVALID);
             }
+
+            // 6. 检查 Token 黑名单 (Redis) — 纯响应式，不 block
+            String jti = claims.getId();
+            if (jti == null) {
+                // 无 jti，跳过 Redis 检查，直接放行
+                return chain.filter(withUserHeaders(exchange, request, claims, null));
+            }
+
+            return redisTemplate
+                    .opsForValue()
+                    .get(CommonConstants.REDIS_KEY_TOKEN_BLACKLIST + jti)
+                    .hasElement()
+                    .onErrorReturn(false)       // Redis 不可用时默认放行（JWT 验签已通过）
+                    .flatMap(isBlacklisted -> {
+                        if (Boolean.TRUE.equals(isBlacklisted)) {
+                            log.warn("Token 已被吊销: jti={}", jti);
+                            return unauthorized(response, ResultCode.TOKEN_BLACKLISTED);
+                        }
+
+                        log.debug("Token 验证通过: userId={}, path={}",
+                                claims.getSubject(), path);
+
+                        return chain.filter(withUserHeaders(exchange, request, claims, jti));
+                    });
         };
+    }
+
+    /**
+     * 将用户信息设置到请求头，转发给下游
+     */
+    private ServerWebExchange withUserHeaders(ServerWebExchange exchange,
+                                              ServerHttpRequest request,
+                                              Claims claims, String jti) {
+        ServerHttpRequest mutated = request.mutate()
+                .header(CommonConstants.HEADER_USER_ID, claims.getSubject())
+                .header(CommonConstants.HEADER_USER_ROLE,
+                        claims.get("role", String.class))
+                .build();
+        if (jti != null) {
+            mutated = mutated.mutate()
+                    .header(CommonConstants.HEADER_TRACE_ID, jti)
+                    .build();
+        }
+        return exchange.mutate().request(mutated).build();
     }
 
     /**
