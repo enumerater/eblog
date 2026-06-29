@@ -340,12 +340,32 @@ export default function ArticleEditor() {
           </div>
           <div className="form-group">
             <label>标签</label>
-            <input
-              type="text"
-              value={tags}
-              onChange={e => setTags(e.target.value)}
-              placeholder="用逗号分隔，如：React, JavaScript, 前端"
-            />
+            <div className="tag-input-row">
+              <input
+                type="text"
+                value={tags}
+                onChange={e => setTags(e.target.value)}
+                placeholder="用逗号分隔，如：React, JavaScript, 前端"
+              />
+              <button
+                type="button"
+                className="btn btn-tag-suggest"
+                onClick={async () => {
+                  if (!content.trim()) return;
+                  try {
+                    const suggested = await api.suggestTags(content);
+                    if (suggested && suggested.length > 0) {
+                      const current = tags.split(',').map(t => t.trim()).filter(Boolean);
+                      const merged = [...new Set([...current, ...suggested])];
+                      setTags(merged.join(', '));
+                    }
+                  } catch {}
+                }}
+                title="根据文章内容推荐标签"
+              >
+                智能推荐
+              </button>
+            </div>
           </div>
           <div className="form-group">
             <label>内容</label>

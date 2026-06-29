@@ -111,16 +111,30 @@
 .notification-bell {
   background: none;
   border: none;
-  font-size: 1.1rem;
+  font-size: 0.88rem;
   cursor: pointer;
-  padding: 6px 10px;
+  padding: 6px 14px;
   border-radius: 4px;
   position: relative;
   color: var(--text-nav);
-  transition: background 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  transition: color 0.2s, background 0.2s;
+}
+
+.bell-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.bell-label {
+  font-size: 0.88rem;
 }
 
 .notification-bell:hover {
+  color: var(--text-on-dark);
   background: var(--bg-nav-hover);
 }
 

@@ -84,6 +84,8 @@ export default function ArticleDetail() {
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [stats, setStats] = useState(null);
+  const [recommendations, setRecommendations] = useState([]);
   const contentRef = useRef(null);
 
   useEffect(() => {
@@ -91,6 +93,10 @@ export default function ArticleDetail() {
       .then(data => setArticle(data))
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
+
+    // 并行获取智能数据
+    api.getArticleStats(id).then(d => setStats(d)).catch(() => {});
+    api.getRecommendations(id, 5).then(d => setRecommendations(d || [])).catch(() => {});
   }, [id]);
 
   // Parse TOC from HTML string — no state, no re-render
@@ -187,6 +193,36 @@ export default function ArticleDetail() {
               className="detail-content"
               dangerouslySetInnerHTML={{ __html: article.content }}
             />
+
+            {/* ── 文章统计 (intelligence-service) ── */}
+            {stats && (
+              <div className="detail-stats">
+                <span title="总字数">📝 {stats.wordCount?.toLocaleString()} 字</span>
+                <span title="阅读时长">⏱ 约 {stats.readingTimeMinutes} 分钟</span>
+                {stats.paragraphCount > 0 && <span title="段落数">¶ {stats.paragraphCount} 段</span>}
+                {stats.imageCount > 0 && <span title="图片数">🖼 {stats.imageCount} 张图</span>}
+                {stats.keywords?.length > 0 && (
+                  <span title="关键词">
+                    🏷 {stats.keywords.slice(0, 5).join(' · ')}
+                  </span>
+                )}
+              </div>
+            )}
+
+            {/* ── 相关推荐 (intelligence-service) ── */}
+            {recommendations.length > 0 && (
+              <div className="detail-recommendations">
+                <h3>相关推荐</h3>
+                <div className="recommendation-list">
+                  {recommendations.map(r => (
+                    <Link key={r.id} to={`/article/${r.id}`} className="recommendation-item">
+                      <span className="rec-title">{r.title}</span>
+                      <span className="rec-score">{(r.score * 100).toFixed(0)}%</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </article>
           {toc.length > 0 && (
             <aside className="toc-sidebar">

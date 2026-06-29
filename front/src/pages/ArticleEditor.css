@@ -222,3 +222,32 @@
     text-align: center;
   }
 }
+
+/* Tag suggest row */
+.tag-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.tag-input-row input {
+  flex: 1;
+}
+
+.btn-tag-suggest {
+  background: var(--bg-nav);
+  color: var(--text-on-dark);
+  border: none;
+  padding: 8px 14px;
+  border-radius: var(--radius);
+  font-size: 0.8rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+  font-family: inherit;
+  flex-shrink: 0;
+}
+
+.btn-tag-suggest:hover {
+  background: var(--accent);
+}

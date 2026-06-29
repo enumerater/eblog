@@ -269,6 +269,83 @@
   color: #e06c75;
 }
 
+/* ── Article Stats (intelligence-service) ── */
+.detail-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 14px 18px;
+  margin: 24px 0;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.detail-stats span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Recommendations ── */
+.detail-recommendations {
+  margin: 32px 0;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.detail-recommendations h3 {
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  margin: 0 0 14px;
+  font-weight: 600;
+}
+
+.recommendation-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.recommendation-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  text-decoration: none;
+  color: var(--text);
+  transition: background 0.15s;
+}
+
+.recommendation-item:hover {
+  background: var(--bg-nav-hover);
+}
+
+.rec-title {
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.rec-score {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  background: var(--bg);
+  padding: 2px 8px;
+  border-radius: 3px;
+}
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .detail-stats {
+    font-size: 0.75rem;
+    gap: 8px;
+    padding: 10px 14px;
+  }
+}
+
 .detail-content pre code .hljs-selector-class,
 .detail-content pre code .hljs-selector-attr {
   color: #d19a66;

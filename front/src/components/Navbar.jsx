@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect, useCallback } from 'react';
-import { auth, api } from '../api';
+import api, { auth } from '../api';
 import './Navbar.css';
 
 function getInitialTheme() {
@@ -90,7 +90,8 @@ export default function Navbar() {
               <Link to="/editor" className={isActive('/editor') ? 'active' : ''}>写作</Link>
               <div className="notification-bell-wrapper">
                 <button className="notification-bell" onClick={openNotifications} title="通知">
-                  🔔
+                  <span className="bell-icon">🔔</span>
+                  <span className="bell-label">通知</span>
                   {unreadCount > 0 && <span className="notification-badge">{unreadCount > 99 ? '99+' : unreadCount}</span>}
                 </button>
                 {showNotifications && (

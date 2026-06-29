@@ -20,25 +20,27 @@ export default function Home() {
   const searchTimerRef = useRef(null);
   const suggestTimerRef = useRef(null);
 
-  // Fetch articles (with optional search params)
+  // Fetch articles — 无搜索词用 article-service, 有搜索词用 search-service
   const fetchArticles = (params = {}) => {
     setLoading(true);
     const hasParams = params.keyword || params.tag;
-    const req = hasParams ? api.searchArticles(params) : api.getArticles();
-    req
-      .then(data => {
-        setArticles(data);
-        // If using new search service, fetch from there instead
-        if (hasParams && params.keyword) {
-          api.searchFullText({ keyword: params.keyword, tag: params.tag })
-            .then(searchData => {
-              if (searchData && searchData.length > 0) setArticles(searchData);
-            })
-            .catch(() => {});
-        }
-      })
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false));
+
+    if (hasParams) {
+      // 使用 search-service: 支持全文搜索 + 高亮
+      api.searchFullText({ keyword: params.keyword, tag: params.tag })
+        .then(data => setArticles(data))
+        .catch(() => {
+          // fallback: 降级到 article-service 的简单搜索
+          api.searchArticles(params).then(data => setArticles(data)).catch(() => {});
+        })
+        .finally(() => setLoading(false));
+    } else {
+      // 无搜索词: 使用 article-service 获取全部文章
+      api.getArticles()
+        .then(data => setArticles(data))
+        .catch(err => setError(err.message))
+        .finally(() => setLoading(false));
+    }
   };
 
   // Initial load

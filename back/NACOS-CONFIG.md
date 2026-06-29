@@ -14,46 +14,54 @@ Nacos 地址: `http://127.0.0.1:8848/nacos` (账号: nacos / nacos)
 ```properties
 jwt.public-key=your-rsa-public-key-base64
 
-# 路由定义
+# 路由定义 (注意: filters 必须用点号展开, 不能用 inline 简写)
 spring.cloud.gateway.routes[0].id=auth-service
 spring.cloud.gateway.routes[0].uri=lb://auth-service
 spring.cloud.gateway.routes[0].predicates[0]=Path=/api/auth/**
-spring.cloud.gateway.routes[0].filters[0]=name:JwtAuth, args.publicPaths: POST:/api/auth/login,POST:/api/auth/refresh
+spring.cloud.gateway.routes[0].filters[0].name=JwtAuth
+spring.cloud.gateway.routes[0].filters[0].args.publicPaths=POST:/api/auth/login,POST:/api/auth/refresh
 
 spring.cloud.gateway.routes[1].id=article-service
 spring.cloud.gateway.routes[1].uri=lb://article-service
 spring.cloud.gateway.routes[1].predicates[0]=Path=/api/articles/**,/api/drafts/**,/api/upload/**
-spring.cloud.gateway.routes[1].filters[0]=name:JwtAuth, args.publicPaths: GET:/api/articles,GET:/api/articles/**,GET:/api/upload/**
+spring.cloud.gateway.routes[1].filters[0].name=JwtAuth
+spring.cloud.gateway.routes[1].filters[0].args.publicPaths=GET:/api/articles,GET:/api/articles/**,GET:/api/upload/**
 
 spring.cloud.gateway.routes[2].id=article-query-service
 spring.cloud.gateway.routes[2].uri=lb://article-query-service
 spring.cloud.gateway.routes[2].predicates[0]=Path=/api/articles-query/**
-spring.cloud.gateway.routes[2].filters[0]=name:JwtAuth, args.publicPaths: GET:/api/articles-query/**
+spring.cloud.gateway.routes[2].filters[0].name=JwtAuth
+spring.cloud.gateway.routes[2].filters[0].args.publicPaths=GET:/api/articles-query/**
 
 spring.cloud.gateway.routes[3].id=comment-service
 spring.cloud.gateway.routes[3].uri=lb://comment-service
 spring.cloud.gateway.routes[3].predicates[0]=Path=/api/comments/**
-spring.cloud.gateway.routes[3].filters[0]=name:JwtAuth, args.publicPaths: GET:/api/comments/**,POST:/api/comments
+spring.cloud.gateway.routes[3].filters[0].name=JwtAuth
+spring.cloud.gateway.routes[3].filters[0].args.publicPaths=GET:/api/comments/**,POST:/api/comments
 
 spring.cloud.gateway.routes[4].id=search-service
 spring.cloud.gateway.routes[4].uri=lb://search-service
 spring.cloud.gateway.routes[4].predicates[0]=Path=/api/search/**
-spring.cloud.gateway.routes[4].filters[0]=name:JwtAuth, args.publicPaths: GET:/api/search/**
+spring.cloud.gateway.routes[4].filters[0].name=JwtAuth
+spring.cloud.gateway.routes[4].filters[0].args.publicPaths=GET:/api/search/**
 
 spring.cloud.gateway.routes[5].id=intelligence-service
 spring.cloud.gateway.routes[5].uri=lb://intelligence-service
 spring.cloud.gateway.routes[5].predicates[0]=Path=/api/intelligence/**
-spring.cloud.gateway.routes[5].filters[0]=name:JwtAuth, args.publicPaths: GET:/api/intelligence/**
+spring.cloud.gateway.routes[5].filters[0].name=JwtAuth
+spring.cloud.gateway.routes[5].filters[0].args.publicPaths=GET:/api/intelligence/**
 
 spring.cloud.gateway.routes[6].id=notification-service
 spring.cloud.gateway.routes[6].uri=lb://notification-service
 spring.cloud.gateway.routes[6].predicates[0]=Path=/api/notifications/**
-spring.cloud.gateway.routes[6].filters[0]=name:JwtAuth, args.publicPaths: none
+spring.cloud.gateway.routes[6].filters[0].name=JwtAuth
+spring.cloud.gateway.routes[6].filters[0].args.publicPaths=
 
 spring.cloud.gateway.routes[7].id=file-service
 spring.cloud.gateway.routes[7].uri=lb://file-service
 spring.cloud.gateway.routes[7].predicates[0]=Path=/api/files/**
-spring.cloud.gateway.routes[7].filters[0]=name:JwtAuth, args.publicPaths: GET:/api/files/**
+spring.cloud.gateway.routes[7].filters[0].name=JwtAuth
+spring.cloud.gateway.routes[7].filters[0].args.publicPaths=GET:/api/files/**
 
 # Redis (用于 Token 黑名单)
 spring.data.redis.host=127.0.0.1
