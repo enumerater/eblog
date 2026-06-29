@@ -13,7 +13,12 @@ export default function Home() {
   const [error, setError] = useState(null);
   const [keyword, setKeyword] = useState('');
   const [activeTag, setActiveTag] = useState('');
+  const [hotSearches, setHotSearches] = useState([]);
+  const [hotArticles, setHotArticles] = useState([]);
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const searchTimerRef = useRef(null);
+  const suggestTimerRef = useRef(null);
 
   // Fetch articles (with optional search params)
   const fetchArticles = (params = {}) => {
@@ -21,13 +26,28 @@ export default function Home() {
     const hasParams = params.keyword || params.tag;
     const req = hasParams ? api.searchArticles(params) : api.getArticles();
     req
-      .then(data => setArticles(data))
+      .then(data => {
+        setArticles(data);
+        // If using new search service, fetch from there instead
+        if (hasParams && params.keyword) {
+          api.searchFullText({ keyword: params.keyword, tag: params.tag })
+            .then(searchData => {
+              if (searchData && searchData.length > 0) setArticles(searchData);
+            })
+            .catch(() => {});
+        }
+      })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
   };
 
   // Initial load
-  useEffect(() => { fetchArticles(); }, []);
+  useEffect(() => {
+    fetchArticles();
+    // Fetch hot searches and hot articles
+    api.getHotSearches(5).then(d => setHotSearches(d)).catch(() => {});
+    api.getHotArticles(5).then(d => setHotArticles(d)).catch(() => {});
+  }, []);
 
   // Debounced keyword search
   useEffect(() => {
@@ -37,6 +57,23 @@ export default function Home() {
     }, 300);
     return () => { if (searchTimerRef.current) clearTimeout(searchTimerRef.current); };
   }, [keyword, activeTag]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Fetch suggestions when typing
+  useEffect(() => {
+    if (suggestTimerRef.current) clearTimeout(suggestTimerRef.current);
+    if (keyword && keyword.length >= 1) {
+      suggestTimerRef.current = setTimeout(async () => {
+        try {
+          const data = await api.getSearchSuggestions(keyword);
+          setSearchSuggestions(data || []);
+          setShowSuggestions(data && data.length > 0);
+        } catch { setShowSuggestions(false); }
+      }, 200);
+    } else {
+      setShowSuggestions(false);
+    }
+    return () => { if (suggestTimerRef.current) clearTimeout(suggestTimerRef.current); };
+  }, [keyword]);
 
   // Collect all unique tags with counts from the full article set
   const allTags = useMemo(() => {
@@ -51,6 +88,11 @@ export default function Home() {
 
   const handleTagClick = (tag) => {
     setActiveTag(prev => prev === tag ? '' : tag);
+  };
+
+  const selectSuggestion = (suggestion) => {
+    setKeyword(suggestion);
+    setShowSuggestions(false);
   };
 
   return (
@@ -72,7 +114,7 @@ export default function Home() {
           </div>
         </header>
 
-        <div className="home-search-bar">
+        <div className="home-search-bar" style={{ position: 'relative' }}>
           <svg className="home-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
@@ -82,9 +124,20 @@ export default function Home() {
             placeholder="搜索文章..."
             value={keyword}
             onChange={e => setKeyword(e.target.value)}
+            onFocus={() => keyword && searchSuggestions.length > 0 && setShowSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
           />
           {keyword && (
             <button className="home-search-clear" onClick={() => setKeyword('')}>&times;</button>
+          )}
+          {showSuggestions && (
+            <div className="search-suggestions-dropdown">
+              {searchSuggestions.map((s, i) => (
+                <div key={i} className="search-suggestion-item" onMouseDown={() => selectSuggestion(s.keyword || s)}>
+                  {s.keyword || s}
+                </div>
+              ))}
+            </div>
           )}
         </div>
 
@@ -124,8 +177,8 @@ export default function Home() {
             )}
           </main>
 
-          {allTags.length > 0 && (
-            <aside className="home-sidebar">
+          <aside className="home-sidebar">
+            {allTags.length > 0 && (
               <div className="sidebar-section">
                 <h3 className="sidebar-title">标签</h3>
                 <div className="tag-cloud">
@@ -141,12 +194,42 @@ export default function Home() {
                   ))}
                 </div>
               </div>
+            )}
+
+            {hotSearches.length > 0 && (
               <div className="sidebar-section">
-                <h3 className="sidebar-title">统计</h3>
-                <p className="sidebar-stat">共 {articles.length} 篇文章</p>
+                <h3 className="sidebar-title">热搜</h3>
+                <div className="hot-search-list">
+                  {hotSearches.map((item, idx) => (
+                    <button key={idx} className="hot-search-item"
+                            onClick={() => setKeyword(item.keyword || item)}>
+                      <span className="hot-search-rank">{idx + 1}</span>
+                      <span className="hot-search-word">{item.keyword || item}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </aside>
-          )}
+            )}
+
+            {hotArticles.length > 0 && (
+              <div className="sidebar-section">
+                <h3 className="sidebar-title">热门文章</h3>
+                <div className="hot-article-list">
+                  {hotArticles.map((article, idx) => (
+                    <a key={article.id || idx} href={`/article/${article.id}`} className="hot-article-item">
+                      <span className="hot-article-rank">{idx + 1}</span>
+                      <span className="hot-article-title">{article.title}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="sidebar-section">
+              <h3 className="sidebar-title">统计</h3>
+              <p className="sidebar-stat">共 {articles.length} 篇文章</p>
+            </div>
+          </aside>
         </div>
       </div>
       <Footer />

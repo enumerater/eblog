@@ -101,3 +101,110 @@
   background: var(--bg-nav-hover);
   border-color: var(--text-nav);
 }
+
+/* ── Notification Bell ── */
+.notification-bell-wrapper {
+  position: relative;
+  display: inline-flex;
+}
+
+.notification-bell {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 4px;
+  position: relative;
+  color: var(--text-nav);
+  transition: background 0.2s;
+}
+
+.notification-bell:hover {
+  background: var(--bg-nav-hover);
+}
+
+.notification-badge {
+  position: absolute;
+  top: 0;
+  right: 2px;
+  background: #e74c3c;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  line-height: 16px;
+  text-align: center;
+  border-radius: 8px;
+  padding: 0 4px;
+}
+
+.notification-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  z-index: 200;
+  margin-top: 4px;
+}
+
+.notification-dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-card);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.notif-mark-all {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 0.78rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.notif-mark-all:hover {
+  background: var(--bg-nav-hover);
+}
+
+.notification-item {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-card);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item:hover {
+  background: var(--bg-nav-hover);
+}
+
+.notification-item.unread {
+  border-left: 3px solid var(--accent);
+}
+
+.notif-title {
+  font-size: 0.83rem;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.notif-time {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
