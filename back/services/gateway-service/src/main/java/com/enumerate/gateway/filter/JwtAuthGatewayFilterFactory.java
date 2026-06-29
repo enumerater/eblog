@@ -193,9 +193,30 @@ public class JwtAuthGatewayFilterFactory
     }
 
     /**
+     * 硬编码的公开路径 — 无需 JWT 认证即可访问
+     * 这些路径即使 Nacos 路由配置中未声明为 publicPath，也直接放行
+     */
+    private static final String[] BUILTIN_PUBLIC_PATTERNS = {
+            "POST:/api/auth/oauth/github",
+    };
+
+    /**
      * 检查请求路径是否在公开路径列表中
      */
     private boolean isPublicPath(String method, String path, List<String> publicPaths) {
+        // 1. 检查硬编码的公开路径（OAuth 等无需 token 的端点）
+        for (String pattern : BUILTIN_PUBLIC_PATTERNS) {
+            String[] parts = pattern.split(":", 2);
+            if (parts.length == 2) {
+                String patternMethod = parts[0].trim().toUpperCase();
+                String patternPath = parts[1].trim();
+                if (patternMethod.equals(method) && pathMatcher.match(patternPath, path)) {
+                    return true;
+                }
+            }
+        }
+
+        // 2. 检查 Nacos 配置的公开路径
         if (publicPaths == null || publicPaths.isEmpty()) {
             return false;
         }

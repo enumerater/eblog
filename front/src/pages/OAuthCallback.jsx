@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { auth } from '../api';
 
@@ -6,8 +6,13 @@ export default function OAuthCallback() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [error, setError] = useState('');
+  const calledRef = useRef(false);
 
   useEffect(() => {
+    // StrictMode 开发模式下 effect 会执行两次，用 ref 防止重复请求
+    if (calledRef.current) return;
+    calledRef.current = true;
+
     const code = searchParams.get('code');
     if (!code) {
       setError('未收到授权码');
