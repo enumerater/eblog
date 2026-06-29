@@ -206,7 +206,17 @@ export default function CommentSection({ articleId }) {
     if (!confirm('确定删除这条评论？')) return;
     try {
       await api.deleteComment(id);
-      setComments(prev => prev.filter(c => c.id !== id));
+      // 递归删除: 可能在顶级, 也可能在回复里
+      setComments(prev => {
+        function removeById(list) {
+          return list.filter(c => {
+            if (c.id === id) return false;
+            if (c.replies?.length) c.replies = removeById(c.replies);
+            return true;
+          });
+        }
+        return removeById(prev);
+      });
     } catch (err) {
       setError(err.message);
     }
