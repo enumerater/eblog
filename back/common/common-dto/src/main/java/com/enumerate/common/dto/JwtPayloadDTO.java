@@ -21,4 +21,6 @@ public class JwtPayloadDTO implements Serializable {
     private String role;
     private String jti;          // JWT ID (用于黑名单)
     private long expireAt;       // 过期时间戳
+    private String nickname;     // 显示昵称 (GitHub OAuth)
+    private String avatarUrl;    // 头像 URL (GitHub OAuth)
 }

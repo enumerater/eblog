@@ -10,6 +10,8 @@ public interface CommonConstants {
     String HEADER_TOKEN_TYPE = "token-type";       // access / refresh
     String HEADER_USER_ID    = "X-User-Id";
     String HEADER_USER_ROLE  = "X-User-Role";
+    String HEADER_NICKNAME   = "X-User-Nickname";
+    String HEADER_AVATAR_URL = "X-User-Avatar";
     String HEADER_TRACE_ID   = "X-Trace-Id";
     String HEADER_REQUEST_ID = "X-Request-Id";
 

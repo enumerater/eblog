@@ -97,6 +97,10 @@ spring.data.redis.port=6379
 # MyBatis-Plus
 mybatis-plus.mapper-locations=classpath:mapper/*.xml
 mybatis-plus.type-aliases-package=com.enumerate.auth.entity
+
+# GitHub OAuth (登录时使用)
+# oauth.github.client-id=your-github-client-id
+# oauth.github.client-secret=your-github-client-secret
 ```
 
 ---

@@ -17,12 +17,24 @@ function setTokens(accessToken, refreshToken) {
   if (refreshToken) {
     localStorage.setItem('eblog_refresh_token', refreshToken);
   }
+
+  // Decode and store user info from token payload
+  const payload = decodeJwtPayload(accessToken);
+  if (payload) {
+    if (payload.sub) localStorage.setItem('eblog_user_id', payload.sub);
+    if (payload.nickname) localStorage.setItem('eblog_nickname', payload.nickname);
+    if (payload.avatar_url) localStorage.setItem('eblog_avatar', payload.avatar_url);
+    if (payload.username) localStorage.setItem('eblog_username', payload.username);
+  }
 }
 
 function clearTokens() {
   localStorage.removeItem('eblog_token');
   localStorage.removeItem('eblog_refresh_token');
   localStorage.removeItem('eblog_user_id');
+  localStorage.removeItem('eblog_nickname');
+  localStorage.removeItem('eblog_avatar');
+  localStorage.removeItem('eblog_username');
 }
 
 /** Decode JWT payload (no verification — client-side only for reading claims). */
@@ -203,12 +215,46 @@ export const auth = {
     throw new Error('登录响应异常');
   },
 
+  async loginWithGithub(code) {
+    const res = await fetch(`${BASE_URL}/auth/oauth/github`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ message: 'GitHub 登录失败' }));
+      throw new Error(err.message || 'GitHub 登录失败');
+    }
+
+    const json = await res.json();
+    if (json.code !== 200) {
+      throw new Error(json.message || 'GitHub 登录失败');
+    }
+
+    const data = json.data || json;
+    if (data.accessToken) {
+      setTokens(data.accessToken, data.refreshToken);
+      return data;
+    }
+
+    throw new Error('登录响应异常');
+  },
+
   isAuthed() {
     return !!getAccessToken();
   },
 
   getUserId() {
     return localStorage.getItem('eblog_user_id');
+  },
+
+  getNickname() {
+    return localStorage.getItem('eblog_nickname') || localStorage.getItem('eblog_username') || '';
+  },
+
+  getAvatar() {
+    return localStorage.getItem('eblog_avatar') || '';
   },
 
   async logout() {

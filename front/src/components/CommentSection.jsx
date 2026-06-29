@@ -4,6 +4,7 @@ import './CommentSection.css';
 
 function CommentItem({ comment, articleId, onDelete, onReply }) {
   const [showReplyForm, setShowReplyForm] = useState(false);
+  // avatarUrl is not returned by backend yet — use first char fallback
 
   return (
     <li className="comment-item">
@@ -74,6 +75,15 @@ export default function CommentSection({ articleId }) {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const isLoggedIn = auth.isAuthed();
+
+  // Pre-fill author from GitHub identity if logged in
+  useEffect(() => {
+    if (isLoggedIn) {
+      const nickname = auth.getNickname();
+      if (nickname) setAuthor(nickname);
+    }
+  }, [isLoggedIn]);
 
   const fetchComments = () => {
     setLoading(true);
@@ -164,15 +174,22 @@ export default function CommentSection({ articleId }) {
       {/* 发表评论 */}
       <form className="comment-form" onSubmit={handleSubmit}>
         <h3 className="comment-form-title">发表评论</h3>
-        <input
-          type="text"
-          className="comment-input-author"
-          placeholder="你的昵称"
-          value={author}
-          onChange={e => setAuthor(e.target.value)}
-          maxLength={30}
-          required
-        />
+        {isLoggedIn ? (
+          <div className="comment-loggedin-info">
+            <span className="comment-author-avatar">{author.charAt(0)}</span>
+            <span>{author}</span>
+          </div>
+        ) : (
+          <input
+            type="text"
+            className="comment-input-author"
+            placeholder="你的昵称"
+            value={author}
+            onChange={e => setAuthor(e.target.value)}
+            maxLength={30}
+            required
+          />
+        )}
         <textarea
           className="comment-input-content"
           placeholder="写下你的评论..."

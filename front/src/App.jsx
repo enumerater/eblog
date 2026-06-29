@@ -7,6 +7,7 @@ import ArticleDetail from './pages/ArticleDetail';
 import ArticleEditor from './pages/ArticleEditor';
 import Admin from './pages/Admin';
 import Login from './pages/Login';
+import OAuthCallback from './pages/OAuthCallback';
 
 function ProtectedRoute({ children }) {
   if (!auth.isAuthed()) {
@@ -25,6 +26,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/article/:id" element={<ArticleDetail />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/oauth/callback" element={<OAuthCallback />} />
           <Route path="/editor" element={
             <ProtectedRoute><ArticleEditor /></ProtectedRoute>
           } />

@@ -215,3 +215,26 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+/* ── Logged-in GitHub user info ── */
+.comment-loggedin-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.88rem;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.comment-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  background: var(--bg);
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-left: 4px;
+}

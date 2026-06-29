@@ -169,6 +169,21 @@ public class JwtAuthGatewayFilterFactory
                 .header(CommonConstants.HEADER_USER_ROLE,
                         claims.get("role", String.class))
                 .build();
+
+        // 可选: 转发昵称和头像
+        String nickname = claims.get("nickname", String.class);
+        if (nickname != null) {
+            mutated = mutated.mutate()
+                    .header(CommonConstants.HEADER_NICKNAME, nickname)
+                    .build();
+        }
+        String avatarUrl = claims.get("avatar_url", String.class);
+        if (avatarUrl != null) {
+            mutated = mutated.mutate()
+                    .header(CommonConstants.HEADER_AVATAR_URL, avatarUrl)
+                    .build();
+        }
+
         if (jti != null) {
             mutated = mutated.mutate()
                     .header(CommonConstants.HEADER_TRACE_ID, jti)

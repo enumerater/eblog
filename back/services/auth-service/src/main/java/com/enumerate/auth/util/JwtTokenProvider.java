@@ -44,20 +44,32 @@ public class JwtTokenProvider {
      * 生成 Access Token
      */
     public String generateAccessToken(String userId, String username, String role) {
+        return generateAccessToken(userId, username, role, null, null);
+    }
+
+    /**
+     * 生成 Access Token (含昵称和头像)
+     */
+    public String generateAccessToken(String userId, String username, String role,
+                                       String nickname, String avatarUrl) {
         long now = System.currentTimeMillis();
         long ttl = jwtProperties.getAccessTokenTtlSeconds() * 1000L;
 
-        return Jwts.builder()
-                .id(UUID.randomUUID().toString())              // jti: 唯一标识
-                .issuer(jwtProperties.getIssuer())             // iss: 签发者
-                .subject(userId)                                // sub: 用户ID
-                .issuedAt(new Date(now))                       // iat: 签发时间
-                .expiration(new Date(now + ttl))               // exp: 过期时间
-                .claim("username", username)                    // 用户名
-                .claim("role", role)                            // 角色
-                .claim("type", CommonConstants.TOKEN_TYPE_ACCESS) // Token 类型
-                .signWith(privateKey, SignatureAlgorithm.RS256)
-                .compact();
+        var builder = Jwts.builder()
+                .id(UUID.randomUUID().toString())
+                .issuer(jwtProperties.getIssuer())
+                .subject(userId)
+                .issuedAt(new Date(now))
+                .expiration(new Date(now + ttl))
+                .claim("username", username)
+                .claim("role", role)
+                .claim("type", CommonConstants.TOKEN_TYPE_ACCESS)
+                .signWith(privateKey, SignatureAlgorithm.RS256);
+
+        if (nickname != null) builder.claim("nickname", nickname);
+        if (avatarUrl != null) builder.claim("avatar_url", avatarUrl);
+
+        return builder.compact();
     }
 
     /**
@@ -96,6 +108,8 @@ public class JwtTokenProvider {
                 .userId(claims.getSubject())
                 .username(claims.get("username", String.class))
                 .role(claims.get("role", String.class))
+                .nickname(claims.get("nickname", String.class))
+                .avatarUrl(claims.get("avatar_url", String.class))
                 .jti(claims.getId())
                 .expireAt(claims.getExpiration().getTime())
                 .build();
