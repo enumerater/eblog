@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enumerate.file.mapper.FileRecordMapper">
+
+    <resultMap id="fileResultMap" type="com.enumerate.file.entity.FileRecord">
+        <id property="id" column="id"/>
+        <result property="originalName" column="original_name"/>
+        <result property="storedPath" column="stored_path"/>
+        <result property="fileSize" column="file_size"/>
+        <result property="mimeType" column="mime_type"/>
+        <result property="md5" column="md5"/>
+        <result property="storageType" column="storage_type"/>
+        <result property="uploaderId" column="uploader_id"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <select id="findById" resultMap="fileResultMap">
+        SELECT * FROM file_records WHERE id = #{id}
+    </select>
+
+    <select id="findByMd5" resultMap="fileResultMap">
+        SELECT * FROM file_records WHERE md5 = #{md5} LIMIT 1
+    </select>
+
+    <select id="findPage" resultMap="fileResultMap">
+        SELECT * FROM file_records
+        <where>
+            <if test="mimeType != null and mimeType != ''">
+                AND mime_type LIKE CONCAT(#{mimeType}, '%')
+            </if>
+        </where>
+        ORDER BY created_at DESC LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countAll" resultType="long">
+        SELECT COUNT(*) FROM file_records
+        <where>
+            <if test="mimeType != null and mimeType != ''">
+                AND mime_type LIKE CONCAT(#{mimeType}, '%')
+            </if>
+        </where>
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO file_records (original_name, stored_path, file_size, mime_type, md5, storage_type, uploader_id, created_at)
+        VALUES (#{originalName}, #{storedPath}, #{fileSize}, #{mimeType}, #{md5}, #{storageType}, #{uploaderId}, NOW())
+    </insert>
+
+    <delete id="deleteById">
+        DELETE FROM file_records WHERE id = #{id}
+    </delete>
+
+</mapper>

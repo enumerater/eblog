@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enumerate.search.mapper.SearchMapper">
+
+    <insert id="insertLog" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO search_logs (keyword, result_count, searched_at)
+        VALUES (#{keyword}, #{resultCount}, NOW())
+    </insert>
+
+    <select id="findTitleSuggestions" resultType="string">
+        SELECT DISTINCT title FROM articles
+        WHERE title LIKE CONCAT('%', #{prefix}, '%')
+        LIMIT 10
+    </select>
+
+    <select id="findAllTitles" resultType="string">
+        SELECT title FROM articles
+    </select>
+
+    <select id="findDistinctKeywords" resultType="string">
+        SELECT keyword FROM search_logs
+        GROUP BY keyword ORDER BY COUNT(*) DESC LIMIT #{limit}
+    </select>
+
+</mapper>

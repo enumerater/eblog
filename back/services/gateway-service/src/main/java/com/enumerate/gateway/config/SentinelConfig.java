@@ -56,6 +56,10 @@ public class SentinelConfig {
                     add(new ApiPathPredicateItem()
                             .setPattern("/api/comments")
                             .setMatchStrategy(SentinelGatewayConstants.URL_MATCH_STRATEGY_PREFIX));
+                    add(new ApiPathPredicateItem()
+                            .setPattern("/api/intelligence/**"));
+                    add(new ApiPathPredicateItem()
+                            .setPattern("/api/files/**"));
                 }}));
 
         // ── 写接口群组 ──
@@ -66,6 +70,12 @@ public class SentinelConfig {
                             .setMatchStrategy(SentinelGatewayConstants.URL_MATCH_STRATEGY_PREFIX));
                     add(new ApiPathPredicateItem()
                             .setPattern("/api/drafts/**")
+                            .setMatchStrategy(SentinelGatewayConstants.URL_MATCH_STRATEGY_PREFIX));
+                    add(new ApiPathPredicateItem()
+                            .setPattern("/api/comments/**")
+                            .setMatchStrategy(SentinelGatewayConstants.URL_MATCH_STRATEGY_PREFIX));
+                    add(new ApiPathPredicateItem()
+                            .setPattern("/api/notifications/**")
                             .setMatchStrategy(SentinelGatewayConstants.URL_MATCH_STRATEGY_PREFIX));
                 }}));
 

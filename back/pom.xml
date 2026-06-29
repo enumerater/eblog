@@ -24,6 +24,12 @@
         <module>services/gateway-service</module>
         <module>services/auth-service</module>
         <module>services/article-service</module>
+        <module>services/query-service</module>
+        <module>services/comment-service</module>
+        <module>services/search-service</module>
+        <module>services/intelligence-service</module>
+        <module>services/notification-service</module>
+        <module>services/file-service</module>
     </modules>
 
     <properties>

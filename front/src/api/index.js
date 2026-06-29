@@ -235,7 +235,7 @@ export const auth = {
 // ──────────────────────────────────────────────
 
 export const api = {
-  // ── Articles ──
+  // ── Articles (article-service) ──
 
   getArticles() {
     return request('/articles');
@@ -309,26 +309,38 @@ export const api = {
     });
   },
 
-  // ── Comments ──
+  // ── Comments (comment-service) ──
 
   getComments(articleId) {
-    return request(`/articles/${articleId}/comments`);
+    return request(`/comments/article/${articleId}`);
   },
 
-  createComment(articleId, data) {
-    return request(`/articles/${articleId}/comments`, {
+  createComment(data) {
+    return request('/comments', {
       method: 'POST',
       body: JSON.stringify(data),
     });
   },
 
-  deleteComment(articleId, id) {
-    return request(`/articles/${articleId}/comments/${id}`, {
+  deleteComment(id) {
+    return request(`/comments/${id}`, {
       method: 'DELETE',
     });
   },
 
-  // ── Upload ──
+  getCommentCount(articleId) {
+    return request(`/comments/count/${articleId}`);
+  },
+
+  approveComment(id) {
+    return request(`/comments/admin/${id}/approve`, { method: 'PUT' });
+  },
+
+  rejectComment(id) {
+    return request(`/comments/admin/${id}/reject`, { method: 'PUT' });
+  },
+
+  // ── Upload (article-service, legacy) ──
 
   uploadImage(file) {
     const formData = new FormData();
@@ -336,8 +348,124 @@ export const api = {
     return request('/upload/image', {
       method: 'POST',
       body: formData,
-      headers: {}, // no Content-Type so browser sets multipart boundary
+      headers: {},
     });
+  },
+
+  // ══════════════════════════════════════════════
+  // New Services
+  // ══════════════════════════════════════════════
+
+  // ── Query Service (article-query-service) ──
+
+  getArticlesPage(page = 1, size = 10, tag) {
+    const params = { page, size };
+    if (tag) params.tag = tag;
+    const qs = new URLSearchParams(params).toString();
+    return request(`/articles-query?${qs}`);
+  },
+
+  getArticleDetail(id) {
+    return request(`/articles-query/${id}`);
+  },
+
+  getHotArticles(limit = 10) {
+    return request(`/articles-query/hot?limit=${limit}`);
+  },
+
+  getTagCloud() {
+    return request('/articles-query/tags');
+  },
+
+  // ── Search Service ──
+
+  searchFullText({ keyword, tag, page = 1, size = 10 } = {}) {
+    const params = { page, size };
+    if (keyword) params.keyword = keyword;
+    if (tag) params.tag = tag;
+    const qs = new URLSearchParams(params).toString();
+    return request(`/search/articles?${qs}`);
+  },
+
+  getSearchSuggestions(keyword) {
+    return request(`/search/suggestions?keyword=${encodeURIComponent(keyword)}`);
+  },
+
+  getHotSearches(limit = 10) {
+    return request(`/search/hot?limit=${limit}`);
+  },
+
+  // ── Intelligence Service ──
+
+  getArticleSummary(id) {
+    return request(`/intelligence/articles/${id}/summary`);
+  },
+
+  getArticleStats(id) {
+    return request(`/intelligence/articles/${id}/stats`);
+  },
+
+  getRecommendations(articleId, limit = 5) {
+    return request(`/intelligence/recommendations/${articleId}?limit=${limit}`);
+  },
+
+  suggestTags(content) {
+    return request('/intelligence/tags/suggest', {
+      method: 'POST',
+      body: JSON.stringify({ content }),
+    });
+  },
+
+  // ── Notification Service ──
+
+  getNotifications(page = 1, size = 10) {
+    return request(`/notifications?page=${page}&size=${size}`);
+  },
+
+  getUnreadCount() {
+    return request('/notifications/unread-count');
+  },
+
+  markNotificationAsRead(id) {
+    return request(`/notifications/${id}/read`, { method: 'PUT' });
+  },
+
+  markAllNotificationsAsRead() {
+    return request('/notifications/read-all', { method: 'PUT' });
+  },
+
+  sendSystemNotification(data) {
+    return request('/notifications/admin', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  // ── File Service ──
+
+  uploadFile(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    return request('/files/upload', {
+      method: 'POST',
+      body: formData,
+      headers: {},
+    });
+  },
+
+  getFileList(type, page = 1, size = 20) {
+    const params = { page, size };
+    if (type) params.type = type;
+    const qs = new URLSearchParams(params).toString();
+    return request(`/files?${qs}`);
+  },
+
+  getFileInfo(id) {
+    return request(`/files/${id}`);
+  },
+
+  deleteFile(id) {
+    return request(`/files/${id}`, { method: 'DELETE' });
   },
 };
 
