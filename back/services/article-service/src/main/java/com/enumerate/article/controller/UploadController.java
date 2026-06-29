@@ -64,7 +64,9 @@ public class UploadController {
                     .body(Map.of("message", "文件上传失败: " + e.getMessage()));
         }
 
-        String url = "https://" + ossConfig.getBucketName() + "." + ossConfig.getEndpoint() + "/" + key;
+        // endpoint is like "https://oss-cn-hangzhou.aliyuncs.com" — extract host to build: https://{bucket}.{host}/{key}
+        String endpointHost = ossConfig.getEndpoint().replace("https://", "").replace("http://", "");
+        String url = "https://" + ossConfig.getBucketName() + "." + endpointHost + "/" + key;
         return ResponseEntity.ok(Map.of("url", url));
     }
 }
