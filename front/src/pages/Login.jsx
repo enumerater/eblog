@@ -17,8 +17,7 @@ export default function Login() {
     setError('');
 
     try {
-      const data = await auth.login(password);
-      auth.setToken(data.token);
+      await auth.login(password);
       navigate('/');
     } catch (err) {
       setError(err.message || '密码错误');

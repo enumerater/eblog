@@ -22,8 +22,8 @@ export default function Navbar() {
 
   const isActive = (path) => pathname === path;
 
-  const handleLogout = () => {
-    auth.logout();
+  const handleLogout = async () => {
+    await auth.logout();
     navigate('/');
   };
 

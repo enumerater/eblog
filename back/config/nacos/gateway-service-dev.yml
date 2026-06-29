@@ -17,13 +17,15 @@ spring:
         - id: article-service
           uri: lb://article-service
           predicates:
-            - Path=/api/articles/**
+            - Path=/api/articles/**,/api/drafts/**,/api/upload/**
           filters:
             - name: JwtAuth
               args:
                 publicPaths: >
                   GET:/api/articles,
-                  GET:/api/articles/**
+                  GET:/api/articles/**,
+                  POST:/api/articles/*/comments,
+                  POST:/api/articles/*/comments/**
         - id: article-query-service
           uri: lb://article-query-service
           predicates:
@@ -43,12 +45,7 @@ spring:
         - id: file-service
           uri: lb://file-service
           predicates:
-            - Path=/api/files/**,/api/upload/**
-          filters:
-            - name: JwtAuth
-              args:
-                publicPaths: >
-                  GET:/api/files/**
+            - Path=/api/files/**
 
 sentinel:
   datasource:
