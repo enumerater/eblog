@@ -99,8 +99,12 @@ export default function Navbar() {
           <Link to="/" className={isActive('/') ? 'active' : ''}>首页</Link>
           {isAuthed ? (
             <>
-              <Link to="/admin" className={isActive('/admin') ? 'active' : ''}>管理</Link>
-              <Link to="/editor" className={isActive('/editor') ? 'active' : ''}>写作</Link>
+              {auth.isAdmin() && (
+                <>
+                  <Link to="/admin" className={isActive('/admin') ? 'active' : ''}>管理</Link>
+                  <Link to="/editor" className={isActive('/editor') ? 'active' : ''}>写作</Link>
+                </>
+              )}
               <button className="notification-bell" onClick={openNotifications} title="通知">
                 <span className="bell-icon">🔔</span>
                 <span className="bell-label">通知</span>
