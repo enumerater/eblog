@@ -83,6 +83,7 @@ public class JwtAuthGatewayFilterFactory
             String method = request.getMethod().name();
             String path = request.getURI().getPath();
 
+
             // 1. 检查是否为公开路径
             if (isPublicPath(method, path, config.getPublicPaths())) {
                 return chain.filter(exchange);
