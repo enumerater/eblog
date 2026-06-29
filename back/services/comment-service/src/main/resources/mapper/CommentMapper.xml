@@ -25,6 +25,12 @@
         ORDER BY created_at ASC
     </select>
 
+    <select id="findAllByArticleId" resultMap="commentResultMap">
+        SELECT * FROM comments
+        WHERE article_id = #{articleId}
+        ORDER BY created_at ASC
+    </select>
+
     <select id="findByParentId" resultMap="commentResultMap">
         SELECT * FROM comments
         WHERE parent_id = #{parentId}

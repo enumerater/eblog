@@ -152,6 +152,13 @@
   gap: 6px;
 }
 
+.c-reply-to {
+  font-size: 0.78rem;
+  color: var(--accent);
+  font-weight: 400;
+  margin-left: 2px;
+}
+
 .c-badge-github {
   display: inline-flex;
   align-items: center;

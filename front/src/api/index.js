@@ -143,6 +143,11 @@ async function request(url, options = {}) {
   const token = getAccessToken();
   if (token) {
     headers['Authorization'] = `Bearer ${token}`;
+    // 显式透传用户身份 (开发环境无 Gateway 时后端也能识别)
+    const uid = localStorage.getItem('eblog_user_id');
+    if (uid) headers['X-User-Id'] = uid;
+    const role = localStorage.getItem('eblog_role');
+    if (role) headers['X-User-Role'] = role;
   }
 
   const mergedHeaders = { ...headers, ...options.headers };
@@ -250,8 +255,8 @@ export const auth = {
   isAuthed() {
     const token = getAccessToken();
     if (!token) return false;
-    // 自动修复: 如果 token 存在但用户信息未解析 (旧 bug 导致), 重新填充
-    if (!localStorage.getItem('eblog_nickname') && !localStorage.getItem('eblog_username')) {
+    // 自动修复: 如果 token 存在但用户信息未完全解析, 重新填充
+    if (!localStorage.getItem('eblog_user_id') || !localStorage.getItem('eblog_nickname')) {
       const payload = decodeJwtPayload(token);
       if (payload) {
         if (payload.sub) localStorage.setItem('eblog_user_id', payload.sub);
@@ -265,7 +270,15 @@ export const auth = {
   },
 
   getUserId() {
-    return localStorage.getItem('eblog_user_id');
+    const stored = localStorage.getItem('eblog_user_id');
+    if (stored) return stored;
+    // 兜底: 直接从 token 里解析
+    const token = getAccessToken();
+    if (token) {
+      const payload = decodeJwtPayload(token);
+      if (payload) return payload.sub || '';
+    }
+    return '';
   },
 
   getNickname() {

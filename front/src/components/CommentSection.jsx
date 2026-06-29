@@ -72,16 +72,16 @@ function GithubLoginButton({ label = 'GitHub 登录' }) {
 }
 
 // ─── 单条评论 ───
-function CommentItem({ comment, articleId, onDelete }) {
+function CommentItem({ comment, articleId, onDelete, onReply }) {
   const isLoggedIn = auth.isAuthed();
   const isOwner = isLoggedIn && auth.getUserId() === String(comment.userId);
+  const canDelete = isLoggedIn && (auth.isAdmin() || isOwner);
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyText, setReplyText] = useState('');
 
   const handleReplySubmit = () => {
-    if (!replyText.trim()) return;
-    // TODO: reply via API once the parent comment section supports it
-    // For now, reply form is shown but reply submission needs parent callback
+    if (!replyText.trim() || !onReply) return;
+    onReply(comment.id, replyText.trim());
     setReplyText('');
     setShowReplyForm(false);
   };
@@ -94,6 +94,7 @@ function CommentItem({ comment, articleId, onDelete }) {
           <div className="c-meta">
             <span className="c-author">
               {comment.author}
+              {comment.replyToName && <span className="c-reply-to">回复 @{comment.replyToName}</span>}
               {comment.userId && <span className="c-badge-github" title="GitHub 用户">GitHub</span>}
             </span>
             <span className="c-time">{relativeTime(comment.createdAt)}</span>
@@ -111,7 +112,7 @@ function CommentItem({ comment, articleId, onDelete }) {
             ) : (
               <span className="c-action-hint">登录后可回复</span>
             )}
-            {isOwner && (
+            {canDelete && (
               <button className="c-action-btn c-action-btn--delete" onClick={() => onDelete(comment.id)}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                 删除
@@ -149,7 +150,7 @@ function CommentItem({ comment, articleId, onDelete }) {
       {comment.replies && comment.replies.length > 0 && (
         <ul className="c-replies">
           {comment.replies.map(reply => (
-            <CommentItem key={reply.id} comment={reply} articleId={articleId} onDelete={onDelete} />
+            <CommentItem key={reply.id} comment={reply} articleId={articleId} onDelete={onDelete} onReply={onReply} />
           ))}
         </ul>
       )}
@@ -211,6 +212,21 @@ export default function CommentSection({ articleId }) {
     }
   };
 
+  const handleReply = async (parentId, replyContent) => {
+    try {
+      await api.createComment({
+        articleId,
+        parentId,
+        author: nickname,
+        content: replyContent,
+        avatarUrl: auth.getAvatar(),
+      });
+      fetchComments();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   const totalComments = comments.reduce((sum, c) => sum + 1 + (c.replies?.length || 0), 0);
 
   return (
@@ -236,7 +252,7 @@ export default function CommentSection({ articleId }) {
       ) : (
         <ul className="c-list">
           {comments.map(c => (
-            <CommentItem key={c.id} comment={c} articleId={articleId} onDelete={handleDelete} />
+            <CommentItem key={c.id} comment={c} articleId={articleId} onDelete={handleDelete} onReply={handleReply} />
           ))}
         </ul>
       )}

@@ -20,6 +20,9 @@ public class CommentVO {
     private String content;
     private String status;
     private String avatarUrl;
+    private Long userId;
+    /** 回复目标 (当回复的不是顶级评论时，显示"回复 @XXX") */
+    private String replyToName;
     private LocalDateTime createdAt;
     private List<CommentVO> replies;
 
@@ -32,6 +35,7 @@ public class CommentVO {
                 .content(comment.getContent())
                 .status(comment.getStatus())
                 .avatarUrl(comment.getAvatarUrl())
+                .userId(comment.getUserId())
                 .createdAt(comment.getCreatedAt())
                 .build();
     }

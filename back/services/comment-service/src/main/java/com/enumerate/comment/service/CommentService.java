@@ -12,9 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,18 +22,69 @@ public class CommentService {
 
     private final CommentMapper commentMapper;
 
+    /**
+     * 获取文章评论，仅两层：顶级评论 + 平铺回复
+     * 回复第三级及以上时，展示 "XXX 回复 @YYY"
+     */
     public List<CommentVO> getArticleComments(Long articleId) {
-        List<Comment> topLevel = commentMapper.findByArticleId(articleId);
-        List<CommentVO> result = new ArrayList<>();
+        List<Comment> all = commentMapper.findAllByArticleId(articleId);
+        if (all == null || all.isEmpty()) return List.of();
 
-        for (Comment comment : topLevel) {
-            CommentVO vo = CommentVO.from(comment);
-            // 查找回复
-            List<Comment> replies = commentMapper.findByParentId(comment.getId());
-            vo.setReplies(replies.stream().map(CommentVO::from).collect(Collectors.toList()));
-            result.add(vo);
+        // id → entity 用于向上追溯
+        Map<Long, Comment> entityById = all.stream()
+                .collect(Collectors.toMap(Comment::getId, c -> c, (a, b) -> a));
+
+        // 顶级评论
+        List<Comment> topLevel = all.stream()
+                .filter(c -> c.getParentId() == null)
+                .collect(Collectors.toList());
+
+        List<CommentVO> roots = new ArrayList<>();
+        Map<Long, CommentVO> rootById = new HashMap<>();
+        for (Comment c : topLevel) {
+            CommentVO vo = CommentVO.from(c);
+            vo.setReplies(new ArrayList<>());
+            roots.add(vo);
+            rootById.put(vo.getId(), vo);
         }
-        return result;
+
+        // 非顶级评论 — 全部平铺挂到顶级下
+        List<Comment> replies = all.stream()
+                .filter(c -> c.getParentId() != null)
+                .collect(Collectors.toList());
+
+        for (Comment reply : replies) {
+            CommentVO replyVO = CommentVO.from(reply);
+
+            // 找到直接父评论的 author → replyToName
+            Comment parent = entityById.get(reply.getParentId());
+            if (parent == null) continue; // 父被删了，忽略
+
+            // 除非是直接回复顶级，否则设置 replyToName
+            if (parent.getParentId() != null) {
+                replyVO.setReplyToName(parent.getAuthor());
+            }
+
+            // 向上找到顶级评论
+            Comment top = parent;
+            while (top.getParentId() != null) {
+                top = entityById.get(top.getParentId());
+                if (top == null) break;
+            }
+
+            if (top != null) {
+                CommentVO root = rootById.get(top.getId());
+                if (root != null) {
+                    root.getReplies().add(replyVO);
+                } else {
+                    roots.add(replyVO);
+                }
+            } else {
+                roots.add(replyVO);
+            }
+        }
+
+        return roots;
     }
 
     @Transactional
