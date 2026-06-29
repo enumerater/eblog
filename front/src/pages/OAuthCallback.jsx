@@ -16,7 +16,10 @@ export default function OAuthCallback() {
 
     auth.loginWithGithub(code)
       .then(() => {
-        navigate('/', { replace: true });
+        // 跳回登录前正在看的页面
+        const redirectTo = sessionStorage.getItem('eblog_redirect_after_login') || '/';
+        sessionStorage.removeItem('eblog_redirect_after_login');
+        navigate(redirectTo, { replace: true });
       })
       .catch(err => {
         setError(err.message || 'GitHub 登录失败');

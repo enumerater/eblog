@@ -25,6 +25,7 @@ function setTokens(accessToken, refreshToken) {
     if (payload.nickname) localStorage.setItem('eblog_nickname', payload.nickname);
     if (payload.avatar_url) localStorage.setItem('eblog_avatar', payload.avatar_url);
     if (payload.username) localStorage.setItem('eblog_username', payload.username);
+    if (payload.role) localStorage.setItem('eblog_role', payload.role);
   }
 }
 
@@ -35,6 +36,7 @@ function clearTokens() {
   localStorage.removeItem('eblog_nickname');
   localStorage.removeItem('eblog_avatar');
   localStorage.removeItem('eblog_username');
+  localStorage.removeItem('eblog_role');
 }
 
 /** Decode JWT payload (no verification — client-side only for reading claims). */
@@ -42,7 +44,11 @@ function decodeJwtPayload(token) {
   try {
     const parts = token.split('.');
     if (parts.length !== 3) return null;
-    return JSON.parse(atob(parts[1]));
+    // JWT 使用 base64url: 将 url-safe 字符还原为标准 base64
+    let base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    // 补齐 padding
+    while (base64.length % 4) base64 += '=';
+    return JSON.parse(atob(base64));
   } catch {
     return null;
   }
@@ -242,7 +248,20 @@ export const auth = {
   },
 
   isAuthed() {
-    return !!getAccessToken();
+    const token = getAccessToken();
+    if (!token) return false;
+    // 自动修复: 如果 token 存在但用户信息未解析 (旧 bug 导致), 重新填充
+    if (!localStorage.getItem('eblog_nickname') && !localStorage.getItem('eblog_username')) {
+      const payload = decodeJwtPayload(token);
+      if (payload) {
+        if (payload.sub) localStorage.setItem('eblog_user_id', payload.sub);
+        if (payload.nickname) localStorage.setItem('eblog_nickname', payload.nickname);
+        if (payload.avatar_url) localStorage.setItem('eblog_avatar', payload.avatar_url);
+        if (payload.username) localStorage.setItem('eblog_username', payload.username);
+        if (payload.role) localStorage.setItem('eblog_role', payload.role);
+      }
+    }
+    return true;
   },
 
   getUserId() {
@@ -250,15 +269,39 @@ export const auth = {
   },
 
   getNickname() {
-    return localStorage.getItem('eblog_nickname') || localStorage.getItem('eblog_username') || '';
+    const stored = localStorage.getItem('eblog_nickname') || localStorage.getItem('eblog_username');
+    if (stored) return stored;
+    // 兜底: 直接从 token 里解析
+    const token = getAccessToken();
+    if (token) {
+      const payload = decodeJwtPayload(token);
+      if (payload) return payload.nickname || payload.username || '';
+    }
+    return '';
   },
 
   getUsername() {
     return localStorage.getItem('eblog_username') || '';
   },
 
+  getRole() {
+    return localStorage.getItem('eblog_role') || '';
+  },
+
+  isAdmin() {
+    return localStorage.getItem('eblog_role') === 'admin';
+  },
+
   getAvatar() {
-    return localStorage.getItem('eblog_avatar') || '';
+    const stored = localStorage.getItem('eblog_avatar');
+    if (stored) return stored;
+    // 兜底: 直接从 token 里解析
+    const token = getAccessToken();
+    if (token) {
+      const payload = decodeJwtPayload(token);
+      if (payload) return payload.avatar_url || '';
+    }
+    return '';
   },
 
   async logout() {

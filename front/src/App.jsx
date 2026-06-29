@@ -9,9 +9,12 @@ import Admin from './pages/Admin';
 import Login from './pages/Login';
 import OAuthCallback from './pages/OAuthCallback';
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute({ children, requireAdmin = false }) {
   if (!auth.isAuthed()) {
     return <Navigate to="/login" replace />;
+  }
+  if (requireAdmin && !auth.isAdmin()) {
+    return <Navigate to="/" replace />;
   }
   return children;
 }
@@ -28,10 +31,10 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/oauth/callback" element={<OAuthCallback />} />
           <Route path="/editor" element={
-            <ProtectedRoute><ArticleEditor /></ProtectedRoute>
+            <ProtectedRoute requireAdmin={true}><ArticleEditor /></ProtectedRoute>
           } />
           <Route path="/admin" element={
-            <ProtectedRoute><Admin /></ProtectedRoute>
+            <ProtectedRoute requireAdmin={true}><Admin /></ProtectedRoute>
           } />
         </Routes>
       </main>

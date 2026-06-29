@@ -286,6 +286,56 @@
   min-height: auto;
 }
 
+/* ─── 登录提示 ─── */
+.c-login-prompt {
+  text-align: center;
+  padding: 32px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.c-login-prompt p {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  margin: 0;
+}
+
+.c-github-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: #24292f;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+
+.c-github-btn:hover {
+  background: #1b1f23;
+  transform: translateY(-1px);
+}
+
+.c-github-btn svg {
+  flex-shrink: 0;
+}
+
+/* ─── 操作提示 ─── */
+.c-action-hint {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  padding: 4px 10px;
+}
+
 /* ─── 评论表单 ─── */
 .c-form {
   background: var(--bg-card);
