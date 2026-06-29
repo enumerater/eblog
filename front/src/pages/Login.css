@@ -19,7 +19,24 @@
 .login-box h1 {
   font-size: 1.4rem;
   color: var(--text-primary);
-  margin: 0 0 4px;
+  margin: 0 0 20px;
+}
+
+.login-section {
+  margin-bottom: 8px;
+}
+
+.login-section-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 2px;
+}
+
+.login-section-desc {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin: 0 0 12px;
 }
 
 .login-desc {
@@ -100,7 +117,6 @@
   font-family: 'Noto Sans SC', system-ui, sans-serif;
   cursor: pointer;
   transition: background 0.2s;
-  margin-bottom: 10px;
 }
 
 .github-login-btn:hover {

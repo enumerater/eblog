@@ -253,6 +253,10 @@ export const auth = {
     return localStorage.getItem('eblog_nickname') || localStorage.getItem('eblog_username') || '';
   },
 
+  getUsername() {
+    return localStorage.getItem('eblog_username') || '';
+  },
+
   getAvatar() {
     return localStorage.getItem('eblog_avatar') || '';
   },

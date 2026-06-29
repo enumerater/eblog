@@ -19,4 +19,6 @@ public class CreateCommentRequest {
     @NotBlank(message = "评论内容不能为空")
     @Size(max = 1000, message = "评论内容最多1000个字符")
     private String content;
+
+    private String avatarUrl; // GitHub 用户头像 URL
 }

@@ -19,6 +19,7 @@ public class CommentVO {
     private String author;
     private String content;
     private String status;
+    private String avatarUrl;
     private LocalDateTime createdAt;
     private List<CommentVO> replies;
 
@@ -30,6 +31,7 @@ public class CommentVO {
                 .author(comment.getAuthor())
                 .content(comment.getContent())
                 .status(comment.getStatus())
+                .avatarUrl(comment.getAvatarUrl())
                 .createdAt(comment.getCreatedAt())
                 .build();
     }

@@ -46,6 +46,7 @@ public class CommentService {
         comment.setAuthor(request.getAuthor());
         comment.setContent(request.getContent());
         comment.setUserId(userId);
+        comment.setAvatarUrl(request.getAvatarUrl());
 
         // 验证父评论存在
         if (request.getParentId() != null) {

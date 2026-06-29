@@ -1,240 +1,417 @@
-/* ========== 评论区 ========== */
-.comment-section {
+/* ==========================================================
+   评论区 — 现代、清爽、响应式
+   ========================================================== */
+
+/* ─── 容器 ─── */
+.c-section {
   max-width: var(--content-width);
-  margin-top: 56px;
+  margin-top: 48px;
   padding-top: 28px;
   border-top: 1px solid var(--border);
 }
 
-.comment-header-area {
+.c-header {
   display: flex;
   align-items: baseline;
-  gap: 10px;
-  margin-bottom: 28px;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
-.comment-title {
-  font-size: 1.05rem;
+.c-title {
+  font-size: 1.15rem;
+  font-weight: 700;
   color: var(--text-primary);
   margin: 0;
-  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
-.comment-count {
+.c-count {
   color: var(--text-muted);
-  font-weight: 400;
   font-size: 0.85rem;
+  font-weight: 400;
 }
 
-.comment-status {
-  color: var(--text-muted);
-  font-size: 0.88rem;
-  padding: 20px 0;
+/* ─── 空状态 / 加载 ─── */
+.c-empty {
   text-align: center;
+  padding: 48px 20px;
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
-.comment-error {
-  color: #e74c3c;
+.c-empty p {
+  margin: 0;
+}
+
+.c-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: c-spin 0.7s linear infinite;
+}
+
+.c-spinner--btn {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 4px;
+  width: 14px;
+  height: 14px;
+  border-width: 2px;
+}
+
+@keyframes c-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── 错误 ─── */
+.c-error {
+  color: #dc2626;
   font-size: 0.85rem;
   margin-bottom: 16px;
-  padding: 8px 12px;
+  padding: 10px 16px;
   background: #fef2f2;
-  border-radius: var(--radius);
-}
-
-/* ========== 评论列表 ========== */
-.comment-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 32px;
-}
-
-.comment-item {
-  padding: 18px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.comment-item:first-child {
-  padding-top: 0;
-}
-
-.comment-item:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.comment-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.comment-author {
-  font-weight: 600;
-  color: var(--text-primary);
-  font-size: 0.88rem;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.comment-author-avatar {
-  width: 28px;
-  height: 28px;
+/* ─── 评论列表 ─── */
+.c-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 28px;
+}
+
+/* ─── 单条评论 ─── */
+.c-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.c-item:first-of-type {
+  padding-top: 0;
+}
+
+.c-item:last-of-type {
+  border-bottom: none;
+}
+
+.c-item-main {
+  display: flex;
+  gap: 12px;
+}
+
+/* ─── 头像 ─── */
+.c-avatar {
   border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
   background: var(--accent);
-  color: #fff;
+  display: block;
+}
+
+.c-avatar--fallback {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.7rem;
+  color: #fff;
   font-weight: 600;
-  flex-shrink: 0;
+  line-height: 1;
+  user-select: none;
+  border-radius: 50%;
 }
 
-.comment-date {
-  color: var(--text-muted);
+/* ─── 评论内容区域 ─── */
+.c-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.c-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.c-author {
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.c-badge-github {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: #fff;
+  background: #24292f;
+  padding: 1px 7px;
+  border-radius: 10px;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+}
+
+.c-time {
   font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-left: auto;
+  white-space: nowrap;
 }
 
-.comment-body {
+.c-content {
   color: var(--text-secondary);
   font-size: 0.92rem;
   line-height: 1.65;
-  margin: 0 0 0 36px;
+  margin: 4px 0 8px;
   white-space: pre-wrap;
   word-break: break-word;
 }
 
-.comment-actions {
+/* ─── 操作按钮 ─── */
+.c-actions {
   display: flex;
-  justify-content: flex-end;
-  margin-top: 8px;
+  gap: 4px;
+  margin-top: 2px;
 }
 
-.comment-delete {
+.c-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   background: none;
   border: none;
   color: var(--text-muted);
-  font-size: 0.76rem;
+  font-size: 0.78rem;
   cursor: pointer;
   padding: 4px 10px;
-  border-radius: 4px;
-  transition: all 0.2s;
+  border-radius: 6px;
+  transition: all 0.15s;
+  font-family: inherit;
 }
 
-.comment-delete:hover {
-  color: #e74c3c;
+.c-action-btn:hover {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+}
+
+.c-action-btn--delete:hover {
+  color: #dc2626;
   background: #fef2f2;
 }
 
-/* ========== 评论表单 ========== */
-.comment-form {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+/* ─── 回复表单 ─── */
+.c-reply-form {
+  margin-top: 10px;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: 10px;
 }
 
-.comment-form-title {
+.c-reply-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* ─── 嵌套回复 ─── */
+.c-replies {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0 44px;
+  border-left: 2px solid var(--border);
+  padding-left: 16px;
+}
+
+.c-replies .c-item {
+  padding: 12px 0;
+  border-bottom-color: var(--border);
+}
+
+.c-replies .c-item:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* ─── 输入框通用 ─── */
+.c-input {
+  font-family: inherit;
+  border: 1px solid var(--border);
+  border-radius: 10px;
   font-size: 0.9rem;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.c-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+
+.c-input--name {
+  max-width: 220px;
+  padding: 10px 14px;
+}
+
+.c-input--content {
+  padding: 12px 14px;
+  resize: vertical;
+  min-height: 80px;
+  line-height: 1.5;
+}
+
+.c-input--reply {
+  padding: 10px 12px;
+  resize: none;
+  min-height: auto;
+}
+
+/* ─── 评论表单 ─── */
+.c-form {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.c-form-title {
+  font-size: 0.92rem;
   font-weight: 600;
   color: var(--text-primary);
   margin: 0;
 }
 
-.comment-input-author {
-  width: 100%;
-  max-width: 240px;
-  padding: 9px 12px;
+/* ─── 已登录用户信息 ─── */
+.c-loggedin {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  font-size: 0.88rem;
+  border-radius: 10px;
+}
+
+.c-loggedin-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.c-loggedin-name {
+  font-weight: 600;
+  font-size: 0.9rem;
   color: var(--text-primary);
-  background: var(--bg-card);
-  outline: none;
-  transition: border-color 0.2s;
-  font-family: inherit;
 }
 
-.comment-input-author:focus {
-  border-color: var(--accent);
+.c-loggedin-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  color: #fff;
+  background: #24292f;
+  padding: 1px 8px;
+  border-radius: 8px;
+  width: fit-content;
+  line-height: 1.6;
 }
 
-.comment-input-content {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  font-size: 0.88rem;
-  color: var(--text-primary);
-  background: var(--bg-card);
-  outline: none;
-  transition: border-color 0.2s;
-  resize: vertical;
-  min-height: 76px;
-  font-family: inherit;
-}
-
-.comment-input-content:focus {
-  border-color: var(--accent);
-}
-
-.comment-form-footer {
+/* ─── 表单底部 ─── */
+.c-form-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.comment-hint {
+.c-hint {
   color: var(--text-muted);
   font-size: 0.78rem;
 }
 
-.comment-submit {
-  padding: 8px 22px;
-  background: var(--accent);
-  color: #fff;
-  border: none;
-  border-radius: var(--radius);
-  font-size: 0.88rem;
-  cursor: pointer;
-  transition: opacity 0.2s;
+/* ─── 按钮 ─── */
+.c-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 9px 22px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
 }
 
-.comment-submit:hover:not(:disabled) {
-  opacity: 0.85;
-}
-
-.comment-submit:disabled {
+.c-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
-/* ── Logged-in GitHub user info ── */
-.comment-loggedin-info {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  font-size: 0.88rem;
-  color: var(--text);
-  margin-bottom: 12px;
+
+.c-btn--primary {
+  background: var(--accent);
+  color: #fff;
 }
 
-.comment-badge {
-  display: inline-block;
-  font-size: 0.68rem;
-  color: var(--text-muted);
-  background: var(--bg);
-  padding: 1px 6px;
-  border-radius: 3px;
-  margin-left: 4px;
+.c-btn--primary:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+.c-btn--sm {
+  font-size: 0.82rem;
+  padding: 6px 16px;
+  background: var(--accent);
+  color: #fff;
+}
+
+.c-btn--sm:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+/* ─── 响应式 ─── */
+@media (max-width: 640px) {
+  .c-section {
+    margin-top: 32px;
+  }
+
+  .c-replies {
+    margin-left: 12px;
+    padding-left: 12px;
+  }
+
+  .c-form {
+    padding: 16px;
+  }
+
+  .c-avatar {
+    width: 28px !important;
+    height: 28px !important;
+    font-size: 12px !important;
+  }
 }
