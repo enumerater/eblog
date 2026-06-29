@@ -16,7 +16,8 @@
       "Bash(mvn compile *)",
       "Bash(mvn clean *)",
       "Bash(timeout 60 mvn spring-boot:run -DskipTests)",
-      "Bash(redis-cli ping *)"
+      "Bash(redis-cli ping *)",
+      "Bash(curl -x http://127.0.0.1:7890 -s -o /dev/null -w \"%{http_code}\" https://github.com --connect-timeout 3)"
     ]
   }
 }

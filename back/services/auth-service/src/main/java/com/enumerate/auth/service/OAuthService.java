@@ -7,13 +7,17 @@ import com.enumerate.common.core.constant.CommonConstants;
 import com.enumerate.common.core.exception.BizException;
 import com.enumerate.common.core.result.ResultCode;
 import com.enumerate.common.dto.LoginResponseDTO;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.netty.http.client.HttpClient;
+import reactor.netty.transport.ProxyProvider;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -37,7 +41,30 @@ public class OAuthService {
     @Value("${oauth.github.client-secret:}")
     private String githubClientSecret;
 
-    private final WebClient webClient = WebClient.create();
+    /** 代理主机, 如 127.0.0.1 */
+    @Value("${oauth.proxy.host:}")
+    private String proxyHost;
+
+    /** 代理端口, 如 7890 */
+    @Value("${oauth.proxy.port:0}")
+    private int proxyPort;
+
+    private WebClient webClient;
+
+    @PostConstruct
+    public void init() {
+        HttpClient httpClient = HttpClient.create();
+        if (!proxyHost.isBlank() && proxyPort > 0) {
+            httpClient = httpClient.proxy(
+                    proxy -> proxy.type(ProxyProvider.Proxy.HTTP)
+                            .host(proxyHost)
+                            .port(proxyPort));
+            log.info("GitHub OAuth 代理已配置: {}:{}", proxyHost, proxyPort);
+        }
+        this.webClient = WebClient.builder()
+                .clientConnector(new ReactorClientHttpConnector(httpClient))
+                .build();
+    }
 
     /**
      * GitHub OAuth 登录
