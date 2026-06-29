@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -123,13 +125,39 @@ public class SearchService {
                 .collect(Collectors.toList());
     }
 
+
     private String generateHighlight(String text, String keyword) {
-        if (text == null || keyword == null || keyword.isBlank()) return "";
-        int idx = text.toLowerCase().indexOf(keyword.toLowerCase());
-        if (idx < 0) return text.substring(0, Math.min(200, text.length()));
-        int start = Math.max(0, idx - 50);
-        int end = Math.min(text.length(), idx + keyword.length() + 80);
-        String snippet = (start > 0 ? "..." : "") + text.substring(start, end) + (end < text.length() ? "..." : "");
-        return snippet.replaceAll("(?i)(" + keyword.replaceAll("[.*+?^${}()|[\\]\\\\]", "\\\\$0") + ")", "<mark>$1</mark>");
+        // 兼容JDK8 替换 isBlank
+        if (text == null || keyword == null || keyword.trim().isEmpty()) {
+            return "";
+        }
+
+        String lowerText = text.toLowerCase();
+        String lowerKeyword = keyword.toLowerCase();
+        int idx = lowerText.indexOf(lowerKeyword);
+
+        // 截取摘要，最多200字符
+        String snippet;
+        if (idx < 0) {
+            snippet = text.substring(0, Math.min(200, text.length()));
+        } else {
+            int start = Math.max(0, idx - 50);
+            int end = Math.min(text.length(), idx + keyword.length() + 80);
+            StringBuilder sb = new StringBuilder();
+            if (start > 0) {
+                sb.append("...");
+            }
+            sb.append(text, start, end);
+            if (end < text.length()) {
+                sb.append("...");
+            }
+            snippet = sb.toString();
+        }
+
+        // 预编译正则，转义特殊字符，消除正则注入红线警告，大小写不敏感
+        String escapedKeyword = Pattern.quote(keyword);
+        Pattern pattern = Pattern.compile(escapedKeyword, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(snippet);
+        return matcher.replaceAll("<mark>$0</mark>");
     }
 }
