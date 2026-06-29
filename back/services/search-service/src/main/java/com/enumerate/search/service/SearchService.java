@@ -14,6 +14,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,7 +66,9 @@ public class SearchService {
                 String title = (String) row.get("title");
                 String content = (String) row.get("content");
                 String tagsJson = (String) row.get("tags_json");
-                Date createdAt = (Date) row.get("created_at");
+
+                LocalDateTime createdAtLdt = (LocalDateTime) row.get("created_at");
+                Date createdAt = Date.from(createdAtLdt.atZone(ZoneId.systemDefault()).toInstant());
 
                 List<String> tags = new ArrayList<>();
                 if (tagsJson != null && !tagsJson.isBlank()) {
