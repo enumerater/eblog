@@ -60,6 +60,21 @@ public class NotificationService {
     }
 
     /**
+     * 同步创建评论通知（由 Feign 内部接口调用，参与 Seata 全局事务）
+     */
+    @Transactional
+    public void createCommentNotificationSync(Long articleId, String articleTitle, String author, String content) {
+        Notification notification = new Notification();
+        notification.setUserId(0L);
+        notification.setType("COMMENT_REPLY");
+        notification.setTitle("文章《" + articleTitle + "》收到新评论");
+        notification.setContent(author + ": " + content);
+        notification.setRelatedId(articleId);
+        notificationMapper.insert(notification);
+        log.info("同步评论通知已创建: articleId={}, author={}", articleId, author);
+    }
+
+    /**
      * 从评论事件创建通知（由 RocketMQ 消费者调用）
      * 通知文章作者：有人评论了你的文章
      */

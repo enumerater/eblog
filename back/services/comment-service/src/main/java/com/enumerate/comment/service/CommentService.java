@@ -8,6 +8,8 @@ import com.enumerate.common.core.constant.CommonConstants;
 import com.enumerate.common.core.exception.BizException;
 import com.enumerate.common.core.result.ResultCode;
 import com.enumerate.common.dto.CommentEventDTO;
+import com.enumerate.common.feign.NotificationClient;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
@@ -27,6 +29,7 @@ public class CommentService {
     private final CommentMapper commentMapper;
     private final RocketMQTemplate rocketMQTemplate;
     private final DataSource dataSource;
+    private final NotificationClient notificationClient;
 
     /** RocketMQ Topic: 评论事件 */
     private static final String COMMENT_EVENTS_TOPIC = "comment-events";
@@ -96,7 +99,7 @@ public class CommentService {
         return roots;
     }
 
-    @Transactional
+    @GlobalTransactional(name = "comment-create", timeoutMills = 30000, rollbackFor = Exception.class)
     public CommentVO createComment(CreateCommentRequest request, Long userId) {
         Comment comment = new Comment();
         comment.setArticleId(request.getArticleId());
@@ -117,8 +120,22 @@ public class CommentService {
         commentMapper.insert(comment);
         log.info("评论已创建: articleId={}, author={}", request.getArticleId(), request.getAuthor());
 
-        // ── 异步通知：通过 RocketMQ 推送评论事件 ──
-        sendCommentEventAsync(comment);
+        // ── 同步通知：通过 Feign 调用通知服务（参与 Seata 全局事务）──
+        try {
+            String articleTitle = queryArticleTitle(comment.getArticleId());
+            notificationClient.createCommentNotification(
+                    comment.getArticleId(),
+                    articleTitle != null ? articleTitle : "",
+                    comment.getAuthor(),
+                    comment.getContent(),
+                    comment.getId(),
+                    userId);
+        } catch (Exception e) {
+            // Feign 调用失败，降级到 MQ 异步通知（最终一致性）
+            log.warn("Feign 调用通知服务失败，降级到 MQ 异步: commentId={}, error={}",
+                    comment.getId(), e.getMessage());
+            sendCommentEventAsync(comment);
+        }
 
         return CommentVO.from(comment);
     }

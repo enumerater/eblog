@@ -51,6 +51,8 @@
         <hutool.version>5.8.34</hutool.version>
         <!-- RocketMQ -->
         <rocketmq-spring-boot.version>2.3.1</rocketmq-spring-boot.version>
+        <!-- Seata -->
+        <seata-server-version>2.0.0</seata-server-version>
     </properties>
 
     <dependencyManagement>
@@ -121,6 +123,13 @@
                 <groupId>com.enumerate</groupId>
                 <artifactId>common-cache</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+
+            <!-- Seata -->
+            <dependency>
+                <groupId>io.seata</groupId>
+                <artifactId>seata-spring-boot-starter</artifactId>
+                <version>${seata-server-version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

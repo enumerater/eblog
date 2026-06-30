@@ -61,6 +61,12 @@
             <artifactId>rocketmq-spring-boot-starter</artifactId>
             <version>${rocketmq-spring-boot.version}</version>
         </dependency>
+
+        <!-- Seata -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

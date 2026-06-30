@@ -122,6 +122,28 @@ services:
     depends_on:
       - rocketmq-namesrv
 
+  # ─── Seata Server (AT 模式分布式事务协调者) ──────────────────────────
+  # 控制台: http://localhost:7091  账号: seata / seata
+  seata-server:
+    image: seataio/seata-server:2.0.0
+    container_name: eblog-seata-server
+    restart: unless-stopped
+    ports:
+      - "7091:7091"       # HTTP 控制台
+      - "8091:8091"       # TC 服务端口
+    environment:
+      SEATA_IP: seata-server
+      SEATA_PORT: 8091
+      STORE_MODE: db
+    volumes:
+      - ./config/seata/seata-server.yml:/seata-server/resources/application.yml
+      - seata-logs:/root/logs/seata
+    depends_on:
+      mysql:
+        condition: service_healthy
+      nacos:
+        condition: service_started
+
   # ─── Canal (MySQL Binlog 监听) ──────────────────────────────────────────
   # 监听 my_blog 数据库的 binlog, 推送到 RocketMQ
   canal:
@@ -157,3 +179,4 @@ volumes:
   rmq-broker-logs:
   rmq-broker-store:
   canal-logs:
+  seata-logs:

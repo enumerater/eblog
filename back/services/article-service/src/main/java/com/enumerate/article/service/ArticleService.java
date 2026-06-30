@@ -4,6 +4,7 @@ import com.enumerate.article.entity.Article;
 import com.enumerate.article.mapper.ArticleMapper;
 import com.enumerate.article.mapper.CommentMapper;
 import com.enumerate.common.dto.ArticleEventDTO;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,7 @@ public class ArticleService {
         return articleMapper.findById(id);
     }
 
+    @GlobalTransactional(name = "article-publish", timeoutMills = 30000, rollbackFor = Exception.class)
     public Article save(Article article) {
         if (article.getSummary() == null || article.getSummary().isBlank()) {
             article.setSummary(Article.generateSummary(article.getContent()));
