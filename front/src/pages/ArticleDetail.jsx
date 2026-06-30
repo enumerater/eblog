@@ -188,11 +188,6 @@ export default function ArticleDetail() {
                 </span>
               )}
             </div>
-            <div
-              ref={contentRef}
-              className="detail-content"
-              dangerouslySetInnerHTML={{ __html: article.content }}
-            />
 
             {/* ── 文章统计 (intelligence-service) ── */}
             {stats && (
@@ -208,6 +203,12 @@ export default function ArticleDetail() {
                 )}
               </div>
             )}
+
+            <div
+              ref={contentRef}
+              className="detail-content"
+              dangerouslySetInnerHTML={{ __html: article.content }}
+            />
 
             {/* ── 相关推荐 (intelligence-service) ── */}
             {recommendations.length > 0 && (
