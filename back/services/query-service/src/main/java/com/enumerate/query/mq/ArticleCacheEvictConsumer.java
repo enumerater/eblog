@@ -1,5 +1,6 @@
 package com.enumerate.query.mq;
 
+import com.enumerate.common.cache.BloomFilterManager;
 import com.enumerate.common.dto.ArticleEventDTO;
 import com.enumerate.query.service.ArticleQueryService;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Component;
 public class ArticleCacheEvictConsumer implements RocketMQListener<ArticleEventDTO> {
 
     private final ArticleQueryService articleQueryService;
+    private final BloomFilterManager bloomFilterManager;
 
     @Override
     public void onMessage(ArticleEventDTO event) {
@@ -37,6 +39,13 @@ public class ArticleCacheEvictConsumer implements RocketMQListener<ArticleEventD
 
         try {
             articleQueryService.evictArticleCache(event.getArticleId());
+
+            // 布隆过滤器：文章创建时加入 ID
+            if ("ARTICLE_CREATED".equals(event.getEventType())) {
+                bloomFilterManager.put(event.getArticleId());
+                log.debug("布隆过滤器新增 ID: {}", event.getArticleId());
+            }
+
             log.info("缓存失效完成: articleId={}, cacheStats={}",
                     event.getArticleId(), articleQueryService.getCacheStats());
         } catch (Exception e) {

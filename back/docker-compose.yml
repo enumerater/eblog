@@ -144,6 +144,38 @@ services:
       nacos:
         condition: service_started
 
+  # ─── Elasticsearch 8 全文检索 ──────────────────────────────────────────
+  elasticsearch:
+    image: elasticsearch:8.17.0
+    container_name: eblog-es
+    restart: unless-stopped
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+
+  kibana:
+    image: kibana:8.17.0
+    container_name: eblog-kibana
+    restart: unless-stopped
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+
   # ─── Canal (MySQL Binlog 监听) ──────────────────────────────────────────
   # 监听 my_blog 数据库的 binlog, 推送到 RocketMQ
   canal:
@@ -180,3 +212,4 @@ volumes:
   rmq-broker-store:
   canal-logs:
   seata-logs:
+  es-data:

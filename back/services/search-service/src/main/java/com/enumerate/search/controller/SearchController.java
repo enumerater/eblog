@@ -37,4 +37,14 @@ public class SearchController {
             @RequestParam(defaultValue = "10") int limit) {
         return Result.success(searchService.getHotSearches(limit));
     }
+
+    /**
+     * 全量重建 ES 索引
+     * 从 MySQL 读取所有文章重新索引到 Elasticsearch
+     */
+    @PostMapping("/reindex")
+    public Result<String> reindex() {
+        int count = searchService.reindexAll();
+        return Result.success("全量重索引完成，共 " + count + " 篇文章");
+    }
 }

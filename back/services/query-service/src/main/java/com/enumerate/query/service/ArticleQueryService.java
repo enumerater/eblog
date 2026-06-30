@@ -1,6 +1,7 @@
 package com.enumerate.query.service;
 
 import com.enumerate.common.cache.MultiCacheManager;
+import com.enumerate.common.cache.BloomFilterManager;
 import com.enumerate.query.dto.*;
 import com.enumerate.query.entity.Article;
 import com.enumerate.query.mapper.ArticleQueryMapper;
@@ -22,6 +23,7 @@ public class ArticleQueryService {
     private final ArticleQueryMapper articleQueryMapper;
     private final StringRedisTemplate stringRedisTemplate;
     private final MultiCacheManager cacheManager;
+    private final BloomFilterManager bloomFilterManager;
 
     // ─── 缓存 Key 常量 ───
     private static final String CACHE_DETAIL = "cache:article:detail:";
@@ -69,6 +71,12 @@ public class ArticleQueryService {
     }
 
     public ArticleDetailVO getArticleDetail(Long id) {
+        // ── L0: 布隆过滤器 — 判断 ID 是否存在 (防缓存穿透) ──
+        if (!bloomFilterManager.mightContain(id)) {
+            log.info("布隆过滤器拦截不存在文章: id={}", id);
+            throw new BizException(ResultCode.NOT_FOUND.getCode(), "文章不存在");
+        }
+
         // ── L1/L2 缓存读取 ──
         String cacheKey = CACHE_DETAIL + id;
         ArticleDetailVO cached = cacheManager.get(cacheKey, ArticleDetailVO.class);
