@@ -103,9 +103,10 @@ services:
       - "10909:10909"
       - "10912:10912"
     environment:
-      JAVA_OPT_EXT: "-server -Xms256m -Xmx512m -DbrokerIP1=host.docker.internal"
-    command: broker -n rocketmq-namesrv:9876
+      JAVA_OPT_EXT: "-server -Xms256m -Xmx512m"
+    command: broker -n rocketmq-namesrv:9876 -c ../conf/broker.conf
     volumes:
+      - ./config/rocketmq/broker.conf:/home/rocketmq/rocketmq-5.3.1/conf/broker.conf
       - rmq-broker-logs:/home/rocketmq/logs
     depends_on:
       - rocketmq-namesrv
