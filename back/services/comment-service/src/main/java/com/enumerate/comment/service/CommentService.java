@@ -7,11 +7,15 @@ import com.enumerate.comment.mapper.CommentMapper;
 import com.enumerate.common.core.constant.CommonConstants;
 import com.enumerate.common.core.exception.BizException;
 import com.enumerate.common.core.result.ResultCode;
+import com.enumerate.common.dto.CommentEventDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.sql.DataSource;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -21,6 +25,11 @@ import java.util.stream.Collectors;
 public class CommentService {
 
     private final CommentMapper commentMapper;
+    private final RocketMQTemplate rocketMQTemplate;
+    private final DataSource dataSource;
+
+    /** RocketMQ Topic: 评论事件 */
+    private static final String COMMENT_EVENTS_TOPIC = "comment-events";
 
     /**
      * 获取文章评论，仅两层：顶级评论 + 平铺回复
@@ -107,7 +116,55 @@ public class CommentService {
 
         commentMapper.insert(comment);
         log.info("评论已创建: articleId={}, author={}", request.getArticleId(), request.getAuthor());
+
+        // ── 异步通知：通过 RocketMQ 推送评论事件 ──
+        sendCommentEventAsync(comment);
+
         return CommentVO.from(comment);
+    }
+
+    /**
+     * 异步推送评论创建事件到 RocketMQ
+     * notification-service 消费后创建站内通知
+     */
+    private void sendCommentEventAsync(Comment comment) {
+        try {
+            // 查询文章标题（用于通知展示）
+            String articleTitle = queryArticleTitle(comment.getArticleId());
+
+            CommentEventDTO event = CommentEventDTO.builder()
+                    .eventType("COMMENT_CREATED")
+                    .commentId(comment.getId())
+                    .articleId(comment.getArticleId())
+                    .articleTitle(articleTitle != null ? articleTitle : "")
+                    .commentUserId(comment.getUserId())
+                    .author(comment.getAuthor())
+                    .content(comment.getContent())
+                    .parentId(comment.getParentId())
+                    .timestamp(System.currentTimeMillis())
+                    .build();
+
+            rocketMQTemplate.convertAndSend(COMMENT_EVENTS_TOPIC, event);
+            log.debug("评论事件已推送 MQ: commentId={}, articleId={}",
+                    comment.getId(), comment.getArticleId());
+        } catch (Exception e) {
+            // MQ 发送失败不影响评论主流程，仅记录日志
+            log.warn("评论事件推送 MQ 失败, 不影响评论写入: commentId={}, error={}",
+                    comment.getId(), e.getMessage());
+        }
+    }
+
+    /** 从 articles 表查询文章标题 */
+    private String queryArticleTitle(Long articleId) {
+        try {
+            JdbcTemplate jdbc = new JdbcTemplate(dataSource);
+            List<String> results = jdbc.queryForList(
+                    "SELECT title FROM articles WHERE id = ?", String.class, articleId);
+            return results.isEmpty() ? null : results.get(0);
+        } catch (Exception e) {
+            log.warn("查询文章标题失败: articleId={}", articleId);
+            return null;
+        }
     }
 
     @Transactional

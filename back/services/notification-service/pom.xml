@@ -33,6 +33,10 @@
             <artifactId>common-core</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.enumerate</groupId>
+            <artifactId>common-dto</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
         </dependency>
@@ -49,6 +53,13 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <!-- RocketMQ -->
+        <dependency>
+            <groupId>org.apache.rocketmq</groupId>
+            <artifactId>rocketmq-spring-boot-starter</artifactId>
+            <version>${rocketmq-spring-boot.version}</version>
         </dependency>
     </dependencies>
     <build>

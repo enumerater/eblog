@@ -49,6 +49,8 @@
         <jjwt.version>0.12.6</jjwt.version>
         <!-- Hutool -->
         <hutool.version>5.8.34</hutool.version>
+        <!-- RocketMQ -->
+        <rocketmq-spring-boot.version>2.3.1</rocketmq-spring-boot.version>
     </properties>
 
     <dependencyManagement>

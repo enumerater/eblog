@@ -2,6 +2,7 @@ package com.enumerate.notification.service;
 
 import com.enumerate.common.core.exception.BizException;
 import com.enumerate.common.core.result.ResultCode;
+import com.enumerate.common.dto.CommentEventDTO;
 import com.enumerate.notification.dto.NotificationVO;
 import com.enumerate.notification.dto.SendNotificationRequest;
 import com.enumerate.notification.entity.Notification;
@@ -56,6 +57,26 @@ public class NotificationService {
         notification.setRelatedId(request.getRelatedId());
         notificationMapper.insert(notification);
         log.info("发送通知: userId={}, title={}", notification.getUserId(), notification.getTitle());
+    }
+
+    /**
+     * 从评论事件创建通知（由 RocketMQ 消费者调用）
+     * 通知文章作者：有人评论了你的文章
+     */
+    @Transactional
+    public void createCommentNotification(CommentEventDTO event) {
+        if (event == null || event.getArticleId() == null) return;
+
+        Notification notification = new Notification();
+        // 通知目标用户：评论所属文章的作者
+        // 这里投递到 userId=0（广播），实际生产环境应查询文章作者 ID
+        notification.setUserId(0L);
+        notification.setType("COMMENT_REPLY");
+        notification.setTitle("文章《" + event.getArticleTitle() + "》收到新评论");
+        notification.setContent(event.getAuthor() + ": " + event.getContent());
+        notification.setRelatedId(event.getArticleId());
+        notificationMapper.insert(notification);
+        log.info("评论通知已创建: articleId={}, author={}", event.getArticleId(), event.getAuthor());
     }
 
     private NotificationVO toVO(Notification n) {

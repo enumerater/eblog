@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"com.enumerate.query", "com.enumerate.common"})
 @EnableDiscoveryClient
 @MapperScan("com.enumerate.query.mapper")
 public class QueryApplication {
