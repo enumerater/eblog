@@ -21,11 +21,7 @@ import java.util.List;
  * 监听 article-events topic（与 IntelligenceService / QueryService 共用同一 Topic）
  * 消费 article-service 推送的文章创建/更新/删除事件，同步至 Elasticsearch
  *
- * 消费链路:
- *   article-service (publish) → MQ → search-service (index)
- *                                       ├─ ARTICLE_CREATED → ES 索引文档
- *                                       ├─ ARTICLE_UPDATED → ES 更新文档
- *                                       └─ ARTICLE_DELETED → ES 删除文档
+ * ES 中只存纯文本（HTML 已剥离），确保高亮正常工作
  */
 @Slf4j
 @Component
@@ -65,15 +61,18 @@ public class ArticleIndexConsumer implements RocketMQListener<ArticleEventDTO> {
         }
     }
 
-    /** 创建/更新 ES 文档 */
+    /** 创建/更新 ES 文档 — 只存纯文本 */
     private void handleIndexOrUpdate(ArticleEventDTO event) throws Exception {
         String now = LocalDateTime.now().format(DT_FMT);
         List<String> tags = parseTags(event.getTagsJson());
 
+        // ES 只存纯文本, 不然高亮会嵌在 HTML 标签里
+        String plainContent = stripHtml(event.getContent());
+
         ArticleDocument doc = ArticleDocument.builder()
                 .id(event.getArticleId())
                 .title(event.getTitle())
-                .content(event.getContent())
+                .content(plainContent)
                 .summary(generateSummary(event.getContent()))
                 .tags(tags)
                 .createdAt(now)
@@ -85,8 +84,7 @@ public class ArticleIndexConsumer implements RocketMQListener<ArticleEventDTO> {
                 .id(String.valueOf(event.getArticleId()))
                 .document(doc));
 
-        log.info("ES 文档已索引: articleId={}, title={}, tags={}",
-                event.getArticleId(), event.getTitle(), tags);
+        log.info("ES 文档已索引 (纯文本): articleId={}, title={}", event.getArticleId(), event.getTitle());
     }
 
     /** 删除 ES 文档 */
@@ -106,9 +104,14 @@ public class ArticleIndexConsumer implements RocketMQListener<ArticleEventDTO> {
         }
     }
 
+    private String stripHtml(String html) {
+        if (html == null) return "";
+        return html.replaceAll("<[^>]+>", "").replaceAll("\\s+", " ").trim();
+    }
+
     private String generateSummary(String html) {
         if (html == null || html.isBlank()) return "";
-        String text = html.replaceAll("<[^>]+>", "").replaceAll("\\s+", " ").trim();
+        String text = stripHtml(html);
         return text.length() > 200 ? text.substring(0, 200) + "..." : text;
     }
 }

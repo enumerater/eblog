@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.elasticsearch.annotations.Setting;
 
 import java.util.List;
 
@@ -16,14 +17,11 @@ import java.util.List;
  * Elasticsearch 文章文档
  *
  * 索引配置:
- *   - title / summary:   Text, 标准分词
- *   - content:           Text, 全文检索
+ *   - ik_smart:          标题/摘要 — 粗粒度分词, 精度高
+ *   - ik_max_word:       内容 — 细粒度分词, 提高召回率
  *   - tags:              Keyword, 精确匹配 + 聚合
  *
- * IK 中文分词 (可选):
- *   安装 IK 插件后, 将 analyzer 改为 "ik_smart" / "ik_max_word"
- *   安装命令: docker exec eblog-es elasticsearch-plugin install -b
- *     https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v8.17.0/elasticsearch-analysis-ik-8.17.0.zip
+ * IK 中文分词器: ES 已安装 elasticsearch-analysis-ik 插件
  */
 @Data
 @Builder
@@ -31,18 +29,19 @@ import java.util.List;
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Document(indexName = "articles")
+@Setting(settingPath = "elasticsearch/ik-settings.json")
 public class ArticleDocument {
 
     @Id
     private Long id;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, analyzer = "ik_smart", searchAnalyzer = "ik_smart")
     private String title;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, analyzer = "ik_max_word", searchAnalyzer = "ik_smart")
     private String content;
 
-    @Field(type = FieldType.Text)
+    @Field(type = FieldType.Text, analyzer = "ik_smart", searchAnalyzer = "ik_smart")
     private String summary;
 
     @Field(type = FieldType.Keyword)

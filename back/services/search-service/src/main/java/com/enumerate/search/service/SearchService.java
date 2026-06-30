@@ -28,7 +28,8 @@ import java.util.stream.Collectors;
 /**
  * 搜索服务
  *
- * 搜索引擎: Elasticsearch 8.x (全文检索 + 中文分词 + 高亮)
+ * 搜索引擎: Elasticsearch 8.x (全文检索 + 高亮)
+ * 存储内容: ES 中仅存纯文本 (HTML 已被剥离), 方便搜索和高亮
  * 辅助存储: Redis ZSet (热搜榜), MySQL (搜索日志)
  */
 @Slf4j
@@ -62,7 +63,6 @@ public class SearchService {
         int finalSize = size;
 
         try {
-            // ── 构建 Bool Query ──
             var boolBuilder = new co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery.Builder();
 
             if (keyword != null && !keyword.isBlank()) {
@@ -81,13 +81,11 @@ public class SearchService {
 
             Query boolQuery = boolBuilder.build()._toQuery();
 
-            // ── 高亮配置 ──
             var highlightBuilder = new co.elastic.clients.elasticsearch.core.search.Highlight.Builder();
             highlightBuilder.fields("title", new HighlightField.Builder().build());
             highlightBuilder.fields("content", new HighlightField.Builder().build());
             highlightBuilder.preTags("<mark>").postTags("</mark>");
 
-            // ── 执行搜索 ──
             SearchResponse<ArticleDocument> response = esClient.search(s -> s
                             .index(ES_INDEX)
                             .query(boolQuery)
@@ -97,19 +95,17 @@ public class SearchService {
                     ArticleDocument.class
             );
 
-            // ── 解析结果 ──
             List<SearchResultVO> results = new ArrayList<>();
             for (Hit<ArticleDocument> hit : response.hits().hits()) {
                 ArticleDocument doc = hit.source();
                 if (doc == null) continue;
 
                 Map<String, List<String>> highlights = hit.highlight();
+                // ES 中存的是纯文本, 高亮片段直接可用
                 String highlightedTitle = getHighlightOrField(highlights, "title", doc.getTitle());
-                String highlightedContent = getHighlightOrField(highlights, "content",
-                        doc.getContent() != null ? stripHtml(doc.getContent()) : "");
-
-                String summary = highlightedContent.length() > 200
-                        ? highlightedContent.substring(0, 200) + "..."
+                String highlightedContent = getHighlightOrField(highlights, "content", doc.getContent() != null ? doc.getContent() : "");
+                String summary = highlightedContent.length() > 120
+                        ? highlightedContent.substring(0, 120) + "..."
                         : highlightedContent;
 
                 LocalDateTime createdAt = parseDateTime(doc.getCreatedAt());
@@ -191,6 +187,7 @@ public class SearchService {
 
     /**
      * 从 MySQL 全量读取文章并重建 ES 索引
+     * 注意: ES 中存储纯文本 (HTML 已剥离), 以便高亮正确工作
      */
     public int reindexAll() {
         JdbcTemplate jdbc = new JdbcTemplate(dataSource);
@@ -202,16 +199,19 @@ public class SearchService {
             try {
                 Long id = ((Number) row.get("id")).longValue();
                 String title = (String) row.get("title");
-                String content = (String) row.get("content");
+                String htmlContent = (String) row.get("content");
                 String tagsJson = (String) row.get("tags_json");
                 String summary = (String) row.get("summary");
                 String createdAt = formatDateTime(row.get("created_at"));
                 String updatedAt = formatDateTime(row.get("updated_at"));
                 List<String> tags = parseTags(tagsJson);
 
+                // ES 只存纯文本, 高亮才能正确工作
+                String plainContent = stripHtml(htmlContent);
+
                 ArticleDocument doc = ArticleDocument.builder()
-                        .id(id).title(title).content(content)
-                        .summary(summary != null ? summary : generateSummary(content))
+                        .id(id).title(title).content(plainContent)
+                        .summary(summary != null ? summary : generateSummary(htmlContent))
                         .tags(tags).createdAt(createdAt).updatedAt(updatedAt)
                         .build();
 
@@ -225,7 +225,7 @@ public class SearchService {
             }
         }
 
-        log.info("ES 全量重索引完成: 共 {} 篇", count);
+        log.info("ES 全量重索引完成: 共 {} 篇 (纯文本)", count);
         return count;
     }
 
@@ -265,7 +265,8 @@ public class SearchService {
         return fallback != null ? fallback : "";
     }
 
-    private String stripHtml(String html) {
+    /** HTML → 纯文本 */
+    public static String stripHtml(String html) {
         if (html == null) return "";
         return html.replaceAll("<[^>]+>", "").replaceAll("\\s+", " ").trim();
     }
@@ -293,7 +294,7 @@ public class SearchService {
 
     private String generateSummary(String html) {
         if (html == null || html.isBlank()) return "";
-        String text = html.replaceAll("<[^>]+>", "").replaceAll("\\s+", " ").trim();
+        String text = stripHtml(html);
         return text.length() > 200 ? text.substring(0, 200) + "..." : text;
     }
 }
