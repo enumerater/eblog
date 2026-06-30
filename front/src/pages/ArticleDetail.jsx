@@ -89,7 +89,7 @@ export default function ArticleDetail() {
   const contentRef = useRef(null);
 
   useEffect(() => {
-    api.getArticle(id)
+    api.getArticleDetail(id)
       .then(data => setArticle(data))
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
