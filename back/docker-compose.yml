@@ -146,7 +146,10 @@ services:
 
   # ─── Elasticsearch 8 全文检索 ──────────────────────────────────────────
   elasticsearch:
-    image: elasticsearch:8.17.0
+    build:
+      context: .
+      dockerfile: Dockerfile.elasticsearch
+    image: eblog-es-with-ik:8.17.0
     container_name: eblog-es
     restart: unless-stopped
     ports:

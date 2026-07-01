@@ -13,6 +13,7 @@ import com.enumerate.search.entity.SearchLog;
 import com.enumerate.search.mapper.SearchMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -46,6 +47,59 @@ public class SearchService {
     private static final String ES_INDEX = "articles";
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final DateTimeFormatter DT_FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+
+    /**
+     * 启动时自动创建 ES 索引（如果不存在），配置 IK 分词器 analyzer
+     *
+     * 注意: 因为 SearchService 直接使用 ElasticsearchClient (co.elastic.clients),
+     * 没有使用 Spring Data ElasticsearchRepository, 所以 @Field(analyzer="ik_smart")
+     * 注解不会生效, 需要手动创建索引并指定 analyzer mapping
+     */
+    @PostConstruct
+    public void initIndex() {
+        try {
+            boolean exists = esClient.indices().exists(e -> e.index(ES_INDEX)).value();
+            if (exists) {
+                log.info("ES 索引 [{}] 已存在, 跳过创建", ES_INDEX);
+                return;
+            }
+
+            log.info("ES 索引 [{}] 不存在, 正在创建 (IK 分词器)...", ES_INDEX);
+
+            esClient.indices().create(c -> c
+                    .index(ES_INDEX)
+                    .settings(s -> s
+                            .analysis(a -> a
+                                    .analyzer("ik_smart", an -> an
+                                            .custom(cu -> cu.tokenizer("ik_smart"))
+                                    )
+                                    .analyzer("ik_max_word", an -> an
+                                            .custom(cu -> cu.tokenizer("ik_max_word"))
+                                    )
+                            )
+                    )
+                    .mappings(m -> m
+                            .properties("id", p -> p.long_(l -> l))
+                            .properties("title", p -> p.text(t -> t
+                                    .analyzer("ik_smart").searchAnalyzer("ik_smart")
+                            ))
+                            .properties("content", p -> p.text(t -> t
+                                    .analyzer("ik_max_word").searchAnalyzer("ik_smart")
+                            ))
+                            .properties("summary", p -> p.text(t -> t
+                                    .analyzer("ik_smart").searchAnalyzer("ik_smart")
+                            ))
+                            .properties("tags", p -> p.text(t -> t))
+                            .properties("createdAt", p -> p.date(d -> d))
+                            .properties("updatedAt", p -> p.date(d -> d))
+                    )
+            );
+
+            log.info("ES 索引 [{}] 创建完成 (IK 分词)", ES_INDEX);
+        } catch (Exception e) {
+            log.error("ES 索引初始化失败: {}", e.getMessage(), e);
+        }
+    }
 
     /**
      * ES 全文检索

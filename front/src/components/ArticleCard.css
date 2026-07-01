@@ -40,6 +40,20 @@
   color: var(--accent);
 }
 
+.article-card-summary mark {
+  background: var(--accent);
+  color: var(--text-on-dark);
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+.article-card-title mark {
+  background: var(--accent);
+  color: var(--text-on-dark);
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
 .article-card-summary {
   color: var(--text-secondary);
   line-height: 1.7;
