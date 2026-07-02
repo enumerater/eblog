@@ -1,4 +1,5 @@
 FROM elasticsearch:8.17.0
 
 # 安装 IK 中文分词插件 (版本 8.17.0)
-RUN elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v8.17.0/elasticsearch-analysis-ik-8.17.0.zip
+COPY elasticsearch-analysis-ik-8.17.0.zip /tmp/
+RUN elasticsearch-plugin install --batch file:///tmp/elasticsearch-analysis-ik-8.17.0.zip

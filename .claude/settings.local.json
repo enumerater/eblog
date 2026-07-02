@@ -19,7 +19,11 @@
       "Bash(redis-cli ping *)",
       "Bash(curl -x http://127.0.0.1:7890 -s -o /dev/null -w \"%{http_code}\" https://github.com --connect-timeout 3)",
       "Bash(curl -s http://127.0.0.1:8848/nacos/v1/ns/service/list)",
-      "Bash(curl -s \"http://127.0.0.1:8848/nacos/v1/cs/configs?dataId=gateway-service&group=DEFAULT_GROUP&tenant=public\")"
+      "Bash(curl -s \"http://127.0.0.1:8848/nacos/v1/cs/configs?dataId=gateway-service&group=DEFAULT_GROUP&tenant=public\")",
+      "Bash(dir *)",
+      "Bash(curl *)",
+      "Bash(/d/Anaconda/python.exe *)",
+      "Bash(python -c ' *)"
     ]
   }
 }
