@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enumerate.query.mapper.DanmakuMapper">
+
+    <resultMap id="danmakuResultMap" type="com.enumerate.query.entity.Danmaku">
+        <id property="id" column="id"/>
+        <result property="articleId" column="article_id"/>
+        <result property="content" column="content"/>
+        <result property="author" column="author"/>
+        <result property="color" column="color"/>
+        <result property="position" column="position"/>
+        <result property="ip" column="ip"/>
+        <result property="createdAt" column="created_at"/>
+    </resultMap>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO danmaku (article_id, content, author, color, position, ip, created_at)
+        VALUES (#{articleId}, #{content}, #{author}, #{color}, #{position}, #{ip}, NOW())
+    </insert>
+
+    <select id="findByArticleId" resultMap="danmakuResultMap">
+        SELECT id, article_id, content, author, color, position, ip, created_at
+        FROM danmaku
+        WHERE article_id = #{articleId}
+        ORDER BY id ASC
+        LIMIT #{limit}
+    </select>
+
+    <select id="findAfterId" resultMap="danmakuResultMap">
+        SELECT id, article_id, content, author, color, position, ip, created_at
+        FROM danmaku
+        WHERE article_id = #{articleId} AND id > #{afterId}
+        ORDER BY id ASC
+        LIMIT #{limit}
+    </select>
+
+</mapper>

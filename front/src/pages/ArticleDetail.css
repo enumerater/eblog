@@ -478,3 +478,9 @@
     font-size: 0.82rem;
   }
 }
+
+/* ========== 浏览量 ========== */
+.detail-view-count {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}

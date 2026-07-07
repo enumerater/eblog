@@ -573,6 +573,28 @@ export const api = {
   deleteFile(id) {
     return request(`/files/${id}`, { method: 'DELETE' });
   },
+
+  // ══════════════════════════════════════════════
+  // Analytics (query-service)
+  // ══════════════════════════════════════════════
+
+  /** 发送心跳 */
+  heartbeat(sessionId) {
+    return request('/analytics/heartbeat', {
+      method: 'POST',
+      body: JSON.stringify({ sessionId }),
+    });
+  },
+
+  /** 获取在线人数 */
+  getOnlineCount() {
+    return request('/analytics/online-count');
+  },
+
+  /** 获取 sessionId */
+  getSessionId() {
+    return request('/analytics/session-id');
+  },
 };
 
 export default api;

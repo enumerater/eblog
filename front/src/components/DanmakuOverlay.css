@@ -1,0 +1,108 @@
+/* ══════════════════════════════════════════════
+   弹幕组件样式
+   ══════════════════════════════════════════════ */
+
+.danmaku-section {
+  margin-top: 32px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+/* ── 弹幕舞台（滚动区域） ── */
+.danmaku-stage {
+  position: relative;
+  height: 220px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+[data-theme="dark"] .danmaku-stage {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* ── 单条弹幕 ── */
+.danmaku-item {
+  position: absolute;
+  white-space: nowrap;
+  font-family: 'Noto Sans SC', system-ui, sans-serif;
+  font-weight: 600;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+  animation: danmaku-scroll linear forwards;
+  opacity: 0;
+  will-change: transform;
+}
+
+.danmaku-author {
+  font-weight: 400;
+  opacity: 0.7;
+  margin-right: 4px;
+  font-size: 0.75em;
+}
+
+/* ── 弹幕滚动动画 ── */
+@keyframes danmaku-scroll {
+  0% {
+    transform: translateX(100%);
+    opacity: 1;
+  }
+  5% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-220%);
+    opacity: 0;
+  }
+}
+
+/* ── 输入栏 ── */
+.danmaku-input-bar {
+  display: flex;
+  gap: 8px;
+}
+
+.danmaku-input {
+  flex: 1;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.danmaku-input:focus {
+  border-color: var(--accent);
+}
+
+.danmaku-input::placeholder {
+  color: var(--text-muted);
+}
+
+.danmaku-send-btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 6px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.danmaku-send-btn:hover {
+  opacity: 0.85;
+}
+
+.danmaku-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

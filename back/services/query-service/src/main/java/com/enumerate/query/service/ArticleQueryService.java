@@ -10,6 +10,7 @@ import com.enumerate.common.core.result.ResultCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -33,6 +34,34 @@ public class ArticleQueryService {
 
     private static final String VIEW_COUNT_KEY = "article:view:";
     private static final String HOT_ARTICLES_KEY = "article:hot";
+
+    // ══════════════════════════════════════════════
+    // 定时任务: 每 5 分钟将 Redis 浏览量刷到 MySQL
+    // ══════════════════════════════════════════════
+
+    /**
+     * 将 Redis 中累积的增量浏览量刷到 DB
+     * Redis 中的值为 (DB基础值 + 增量)，直接回写保持同步
+     */
+    @Scheduled(fixedRate = 300_000) // 5分钟
+    public void flushViewCounts() {
+        Set<String> keys = stringRedisTemplate.keys(VIEW_COUNT_KEY + "*");
+        if (keys == null || keys.isEmpty()) return;
+
+        for (String key : keys) {
+            try {
+                Long articleId = Long.parseLong(key.substring(VIEW_COUNT_KEY.length()));
+                String countStr = stringRedisTemplate.opsForValue().get(key);
+                if (countStr != null) {
+                    long count = Long.parseLong(countStr);
+                    articleQueryMapper.updateViewCount(articleId, count);
+                }
+            } catch (Exception e) {
+                log.warn("刷浏览量失败: key={}", key, e);
+            }
+        }
+        log.debug("浏览量刷库完成, 共 {} 篇", keys.size());
+    }
 
     public PageResult<ArticleVO> getArticlePage(int page, int size, String tag) {
         if (page < 1) page = 1;
@@ -83,6 +112,11 @@ public class ArticleQueryService {
         if (cached != null) {
             // 缓存命中也递增阅读计数（异步，不影响响应）
             incrementViewCount(id);
+            // 返回时从 Redis 获取最新计数，覆盖缓存中的值
+            Long redisCount = getViewCount(id);
+            if (redisCount != null && redisCount > 0) {
+                cached.setViewCount(redisCount);
+            }
             return cached;
         }
 
@@ -91,9 +125,12 @@ public class ArticleQueryService {
             throw new BizException(ResultCode.NOT_FOUND.getCode(), "文章不存在");
         }
         incrementViewCount(id);
-        long viewCount = Optional.ofNullable(getViewCount(id)).orElse(0L) + 1;
+        // 以 DB 中的 view_count 为基础
+        long dbCount = article.getViewCount() != null ? article.getViewCount() : 0L;
+        long redisDelta = getViewCount(id) != null ? getViewCount(id) - dbCount : 0L;
+        long totalViewCount = Math.max(dbCount, getViewCount(id) != null ? getViewCount(id) : dbCount);
 
-        ArticleDetailVO vo = ArticleDetailVO.from(article, viewCount);
+        ArticleDetailVO vo = ArticleDetailVO.from(article, totalViewCount);
         // 文章详情缓存 30 分钟，内容变更通过 MQ 广播 evict（参见 article-events 消费者）
         cacheManager.set(cacheKey, vo, 30);
         log.debug("文章详情缓存已写入: key={}, hitRate={}", cacheKey, cacheManager.getStats());
@@ -143,7 +180,16 @@ public class ArticleQueryService {
 
     private Long getViewCount(Long articleId) {
         String count = stringRedisTemplate.opsForValue().get(VIEW_COUNT_KEY + articleId);
-        return count != null ? Long.parseLong(count) : 0L;
+        if (count != null) {
+            return Long.parseLong(count);
+        }
+        // Redis 中无记录时，从 DB 读取作为初始值
+        Article article = articleQueryMapper.findById(articleId);
+        if (article != null && article.getViewCount() != null) {
+            stringRedisTemplate.opsForValue().set(VIEW_COUNT_KEY + articleId, String.valueOf(article.getViewCount()));
+            return article.getViewCount();
+        }
+        return 0L;
     }
 
     private void incrementViewCount(Long articleId) {

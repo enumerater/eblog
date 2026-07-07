@@ -182,6 +182,11 @@ export default function ArticleDetail() {
             <h1 className="detail-title">{article.title}</h1>
             <div className="detail-meta">
               <span className="detail-date">{date}</span>
+              {article.viewCount !== undefined && (
+                <span className="detail-view-count" title="浏览量">
+                  👁 {article.viewCount.toLocaleString()} 次阅读
+                </span>
+              )}
               {article.tags?.length > 0 && (
                 <span className="detail-tags">
                   {article.tags.map(t => <span key={t} className="tag">{t}</span>)}

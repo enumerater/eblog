@@ -9,17 +9,18 @@
         <result property="content" column="content"/>
         <result property="tagsJson" column="tags_json"/>
         <result property="summary" column="summary"/>
+        <result property="viewCount" column="view_count"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
     </resultMap>
 
     <select id="findById" resultMap="articleResultMap">
-        SELECT id, title, content, tags_json, summary, created_at, updated_at
+        SELECT id, title, content, tags_json, summary, view_count, created_at, updated_at
         FROM articles WHERE id = #{id}
     </select>
 
     <select id="findPage" resultMap="articleResultMap">
-        SELECT id, title, content, tags_json, summary, created_at, updated_at
+        SELECT id, title, content, tags_json, summary, view_count, created_at, updated_at
         FROM articles ORDER BY created_at DESC LIMIT #{limit} OFFSET #{offset}
     </select>
 
@@ -28,7 +29,7 @@
     </select>
 
     <select id="searchByTag" resultMap="articleResultMap">
-        SELECT id, title, content, tags_json, summary, created_at, updated_at
+        SELECT id, title, content, tags_json, summary, view_count, created_at, updated_at
         FROM articles
         WHERE tags_json LIKE CONCAT('%', #{tag}, '%')
         ORDER BY created_at DESC LIMIT #{limit} OFFSET #{offset}
@@ -39,8 +40,12 @@
     </select>
 
     <select id="findAll" resultMap="articleResultMap">
-        SELECT id, title, content, tags_json, summary, created_at, updated_at
+        SELECT id, title, content, tags_json, summary, view_count, created_at, updated_at
         FROM articles ORDER BY created_at DESC
     </select>
+
+    <update id="updateViewCount">
+        UPDATE articles SET view_count = #{viewCount} WHERE id = #{id}
+    </update>
 
 </mapper>

@@ -12,6 +12,7 @@ public class Article {
     private String content;
     private String tagsJson;
     private String summary;
+    private Long viewCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -43,6 +44,8 @@ public class Article {
     public void setTagsJson(String tagsJson) { this.tagsJson = tagsJson; }
     public String getSummary() { return summary; }
     public void setSummary(String summary) { this.summary = summary; }
+    public Long getViewCount() { return viewCount; }
+    public void setViewCount(Long viewCount) { this.viewCount = viewCount; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }

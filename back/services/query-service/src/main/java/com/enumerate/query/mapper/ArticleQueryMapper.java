@@ -11,4 +11,5 @@ public interface ArticleQueryMapper {
     List<Article> searchByTag(@Param("tag") String tag, @Param("offset") int offset, @Param("limit") int limit);
     long countByTag(@Param("tag") String tag);
     List<Article> findAll();
+    void updateViewCount(@Param("id") Long id, @Param("viewCount") Long viewCount);
 }
