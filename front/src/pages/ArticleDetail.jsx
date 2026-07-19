@@ -99,6 +99,15 @@ export default function ArticleDetail() {
     return parseToc(article.content);
   }, [article?.content]);
 
+  // 统计字数与阅读时间（纯前端，与编辑器一致）
+  const stats = useMemo(() => {
+    if (!article?.content) return { wordCount: 0, readingTime: 1 };
+    const text = article.content.replace(/<[^>]+>/g, '').replace(/\s+/g, ' ');
+    const wordCount = text.length;
+    const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+    return { wordCount, readingTime };
+  }, [article?.content]);
+
   const activeRef = useRef('');
   const tocRef = useRef(null);
 
@@ -176,8 +185,11 @@ export default function ArticleDetail() {
             <h1 className="detail-title">{article.title}</h1>
             <div className="detail-meta">
               <span className="detail-date">{date}</span>
+              <span className="meta-sep">·</span>
+              <span className="detail-stats">{stats.wordCount} 字 · 约 {stats.readingTime} 分钟阅读</span>
               {article.tags?.length > 0 && (
                 <span className="detail-tags">
+                  <span className="meta-sep">·</span>
                   {article.tags.map(t => <span key={t} className="tag">{t}</span>)}
                 </span>
               )}

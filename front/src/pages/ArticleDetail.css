@@ -59,6 +59,16 @@
   gap: 6px;
 }
 
+.meta-sep {
+  color: var(--border);
+  font-weight: 300;
+}
+
+.detail-stats {
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
 /* ========== 渲染的富文本样式 ========== */
 .detail-content {
   line-height: 1.9;
