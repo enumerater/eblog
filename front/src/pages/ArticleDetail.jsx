@@ -64,7 +64,7 @@ function slugify(text) {
 
 function parseToc(html) {
   const doc = new DOMParser().parseFromString(html, 'text/html');
-  const headings = doc.querySelectorAll('h1, h2, h3');
+  const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
   const usedIds = new Set();
   return Array.from(headings).map(h => {
     const text = h.textContent.trim();
@@ -75,7 +75,7 @@ function parseToc(html) {
       id = `${baseId}-${counter++}`;
     }
     usedIds.add(id);
-    return { id, text, level: h.tagName === 'H1' ? 1 : h.tagName === 'H2' ? 2 : 3 };
+    return { id, text, level: parseInt(h.tagName.substring(1)) };
   });
 }
 
@@ -106,7 +106,7 @@ export default function ArticleDetail() {
   useEffect(() => {
     if (!article || !contentRef.current || toc.length === 0) return;
 
-    const headings = contentRef.current.querySelectorAll('h2, h3');
+    const headings = contentRef.current.querySelectorAll('h1, h2, h3, h4, h5, h6');
     headings.forEach((h, i) => {
       if (toc[i]) h.id = toc[i].id;
     });

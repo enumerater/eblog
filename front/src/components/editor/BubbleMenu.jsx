@@ -8,6 +8,8 @@ const icons = {
   code: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>,
   link: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>,
   highlight: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 11-6 6v3h9l3-3"/><path d="m22 12-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></svg>,
+  subscript: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 20l8-16"/><path d="M12 20l8-16"/><path d="M18 20h4v-2c0-1-.5-1.5-1-2h2"/></svg>,
+  superscript: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 20l8-16"/><path d="M12 20l8-16"/><path d="M18 4h4v2c0 1-.5 1.5-1 2h2"/></svg>,
 };
 
 function BubbleBtn({ onClick, active, title, children }) {
@@ -84,6 +86,20 @@ export default function EditorBubbleMenu({ editor }) {
         title="高亮"
       >
         {icons.highlight}
+      </BubbleBtn>
+      <BubbleBtn
+        onClick={() => editor.chain().focus().toggleSubscript().run()}
+        active={editor.isActive('subscript')}
+        title="下标"
+      >
+        {icons.subscript}
+      </BubbleBtn>
+      <BubbleBtn
+        onClick={() => editor.chain().focus().toggleSuperscript().run()}
+        active={editor.isActive('superscript')}
+        title="上标"
+      >
+        {icons.superscript}
       </BubbleBtn>
       <span className="bubble-divider" />
       <BubbleBtn

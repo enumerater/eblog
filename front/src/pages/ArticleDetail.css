@@ -354,6 +354,21 @@
   font-size: 0.76rem;
 }
 
+.toc-level-4 {
+  padding-left: 56px;
+  font-size: 0.74rem;
+}
+
+.toc-level-5 {
+  padding-left: 70px;
+  font-size: 0.72rem;
+}
+
+.toc-level-6 {
+  padding-left: 84px;
+  font-size: 0.7rem;
+}
+
 @media (max-width: 1200px) {
   .toc-sidebar {
     display: none;

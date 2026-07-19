@@ -7,7 +7,7 @@ import './ArticleEditor.css';
 function parseToc(html) {
   if (!html) return [];
   const doc = new DOMParser().parseFromString(html, 'text/html');
-  const headings = doc.querySelectorAll('h1, h2, h3');
+  const headings = doc.querySelectorAll('h1, h2, h3, h4, h5, h6');
   const usedIds = new Set();
   return Array.from(headings).map(h => {
     const text = h.textContent.trim();
@@ -15,7 +15,7 @@ function parseToc(html) {
     let id = base, c = 1;
     while (usedIds.has(id)) id = `${base}-${c++}`;
     usedIds.add(id);
-    return { id, text, level: h.tagName === 'H1' ? 1 : h.tagName === 'H2' ? 2 : 3 };
+    return { id, text, level: parseInt(h.tagName.substring(1)) };
   });
 }
 
@@ -203,7 +203,7 @@ export default function ArticleEditor() {
       const containerRect = scrollEl.getBoundingClientRect();
       let current = '';
 
-      editorEl.querySelectorAll('h2, h3').forEach(h => {
+      editorEl.querySelectorAll('h2, h3, h4, h5, h6').forEach(h => {
         const rect = h.getBoundingClientRect();
         if (rect.top <= containerRect.top + 60) {
           const text = h.textContent.trim();
@@ -244,7 +244,7 @@ export default function ArticleEditor() {
     const editorEl = scrollEl?.querySelector('.ProseMirror');
     if (!scrollEl || !editorEl) return;
 
-    const headings = editorEl.querySelectorAll('h2, h3');
+    const headings = editorEl.querySelectorAll('h1, h2, h3, h4, h5, h6');
     for (const h of headings) {
       if (h.textContent.trim() === tocItem.text) {
         h.scrollIntoView({ behavior: 'smooth', block: 'start' });

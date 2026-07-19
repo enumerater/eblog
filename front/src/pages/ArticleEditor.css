@@ -160,6 +160,21 @@
   font-size: 0.76rem;
 }
 
+.editor-toc-sidebar .toc-level-4 {
+  padding-left: 56px;
+  font-size: 0.74rem;
+}
+
+.editor-toc-sidebar .toc-level-5 {
+  padding-left: 70px;
+  font-size: 0.72rem;
+}
+
+.editor-toc-sidebar .toc-level-6 {
+  padding-left: 84px;
+  font-size: 0.7rem;
+}
+
 /* Draft save status */
 .draft-save-status {
   font-size: 0.8rem;
