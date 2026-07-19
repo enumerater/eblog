@@ -16,7 +16,10 @@
       "Bash(mvn compile *)",
       "Bash(mvn clean *)",
       "Bash(timeout 60 mvn spring-boot:run -DskipTests)",
-      "Bash(redis-cli ping *)"
+      "Bash(redis-cli ping *)",
+      "Bash(./mvnw compile *)",
+      "Bash(mvn --version)",
+      "Bash(mvn test *)"
     ]
   }
 }

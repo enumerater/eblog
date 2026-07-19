@@ -1,0 +1,68 @@
+package com.enumerate.eblog.controller;
+
+import com.aliyun.oss.OSS;
+import com.enumerate.eblog.config.OssConfig;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Map;
+import java.util.UUID;
+
+@RestController
+@RequestMapping("/api/upload")
+public class UploadController {
+
+    private final OSS ossClient;
+    private final OssConfig ossConfig;
+
+    public UploadController(OSS ossClient, OssConfig ossConfig) {
+        this.ossClient = ossClient;
+        this.ossConfig = ossConfig;
+    }
+
+    @PostMapping("/image")
+    public ResponseEntity<?> uploadImage(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "文件不能为空"));
+        }
+
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", "只允许上传图片文件"));
+        }
+
+        String originalName = file.getOriginalFilename();
+        String ext = "";
+        if (originalName != null && originalName.contains(".")) {
+            ext = originalName.substring(originalName.lastIndexOf("."));
+        } else {
+            ext = switch (contentType) {
+                case "image/png" -> ".png";
+                case "image/gif" -> ".gif";
+                case "image/webp" -> ".webp";
+                case "image/svg+xml" -> ".svg";
+                default -> ".jpg";
+            };
+        }
+
+        String datePath = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+        String key = "images/" + datePath + "/" + UUID.randomUUID().toString().replace("-", "") + ext;
+
+        try {
+            ossClient.putObject(ossConfig.getBucketName(), key, file.getInputStream());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "文件上传失败: " + e.getMessage()));
+        }
+
+        String url = "https://" + ossConfig.getBucketName() + "." + ossConfig.getEndpoint() + "/" + key;
+        return ResponseEntity.ok(Map.of("url", url));
+    }
+}
