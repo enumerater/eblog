@@ -328,6 +328,40 @@ export const api = {
     });
   },
 
+  // ── Diaries ──
+
+  getDiaries() {
+    return request('/diaries');
+  },
+
+  getDiary(id) {
+    return request(`/diaries/${id}`);
+  },
+
+  getDiaryByDate(date) {
+    return request(`/diaries/date?date=${date}`);
+  },
+
+  createDiary(data) {
+    return request('/diaries', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  },
+
+  updateDiary(id, data) {
+    return request(`/diaries/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  },
+
+  deleteDiary(id) {
+    return request(`/diaries/${id}`, {
+      method: 'DELETE',
+    });
+  },
+
   // ── Upload ──
 
   uploadImage(file) {

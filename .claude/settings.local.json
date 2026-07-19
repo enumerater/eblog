@@ -20,7 +20,28 @@
       "Bash(./mvnw compile *)",
       "Bash(mvn --version)",
       "Bash(mvn test *)",
-      "Bash(npm view *)"
+      "Bash(npm view *)",
+      "Bash(grep -n \"CREATE TABLE \\\\`articles\\\\`\" -A 30 \"E:/eblog/back/my_blog_final.sql\")",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8080/api/diaries/date?date=2026-07-19)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5174/api/diaries/date?date=2026-07-19)",
+      "Bash(curl -s -w \"\\\\nHTTP_CODE: %{http_code}\\\\n\" http://localhost:8080/api/diaries)",
+      "Bash(curl -s -w \"\\\\nHTTP_CODE: %{http_code}\\\\n\" http://localhost:8080/api/diaries/date?date=2026-07-19)",
+      "Bash(curl -s -w \"\\\\nHTTP_CODE: %{http_code}\\\\n\" http://localhost:8080/api/diaries/999)",
+      "Bash(curl -s -w \"\\\\nHTTP_CODE: %{http_code}\\\\n\" http://localhost:5174/)",
+      "Bash(curl -s -w \"\\\\nHTTP_CODE: %{http_code}\\\\n\" http://localhost:5174/src/pages/Diary.css)",
+      "Bash(curl -s -w \"\\\\nHTTP_CODE: %{http_code}\\\\n\" -X POST -H \"Content-Type: application/json\" -d '{\"password\":\"admin\"}' http://localhost:8080/api/auth/login)",
+      "Bash(curl -s -w \"\\\\nHTTP_CODE: %{http_code}\\\\n\" -X POST -H \"Content-Type: application/json\" -d '{\"password\":\"1234\"}' http://localhost:8080/api/auth/login)",
+      "Bash(curl -s -w \"\\\\nHTTP_CODE: %{http_code}\\\\n\" http://localhost:8080/api/diaries/date)",
+      "Bash(curl -s -v http://localhost:8080/api/diaries)",
+      "Bash(netstat -ano)",
+      "Bash(ps -p 12612,5688 -o pid,comm)",
+      "Bash(tasklist //FI \"PID eq 12612\" //FO CSV //NH)",
+      "Bash(curl -s -w \"\\\\nHTTP_CODE: %{http_code}\\\\n\" http://localhost:5174/api/diaries/date?date=2026-07-19)",
+      "Bash(mvn spring-boot:run -q)",
+      "Bash(mvn package *)",
+      "Bash(java -jar target/*.jar --server.port=8080)",
+      "Bash(curl -s -X POST -H \"Content-Type: application/json\" -d '{\"username\":\"admin\",\"password\":\"1234\"}' http://localhost:8080/api/auth/login)",
+      "Bash(curl *)"
     ]
   }
 }

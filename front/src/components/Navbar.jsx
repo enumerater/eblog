@@ -40,6 +40,7 @@ export default function Navbar() {
           {isAuthed ? (
             <>
               <Link to="/admin" className={isActive('/admin') ? 'active' : ''}>管理</Link>
+              <Link to="/diary" className={isActive('/diary') ? 'active' : ''}>日记</Link>
               <Link to="/editor" className={isActive('/editor') ? 'active' : ''}>写作</Link>
               <button className="navbar-logout" onClick={handleLogout}>退出</button>
             </>

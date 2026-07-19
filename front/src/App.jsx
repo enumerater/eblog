@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import ArticleDetail from './pages/ArticleDetail';
 import ArticleEditor from './pages/ArticleEditor';
 import Admin from './pages/Admin';
+import Diary from './pages/Diary';
 import Login from './pages/Login';
 
 function ProtectedRoute({ children }) {
@@ -30,6 +31,9 @@ export default function App() {
           } />
           <Route path="/admin" element={
             <ProtectedRoute><Admin /></ProtectedRoute>
+          } />
+          <Route path="/diary" element={
+            <ProtectedRoute><Diary /></ProtectedRoute>
           } />
         </Routes>
       </main>

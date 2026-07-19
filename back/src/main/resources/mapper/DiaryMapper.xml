@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.enumerate.eblog.mapper.DiaryMapper">
+
+    <resultMap id="diaryResultMap" type="com.enumerate.eblog.entity.Diary">
+        <id property="id" column="id"/>
+        <result property="date" column="date"/>
+        <result property="content" column="content"/>
+        <result property="mood" column="mood"/>
+        <result property="weather" column="weather"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="diaryResultMap">
+        SELECT id, date, content, mood, weather, created_at, updated_at
+        FROM diaries
+        ORDER BY date DESC
+    </select>
+
+    <select id="findById" resultMap="diaryResultMap">
+        SELECT id, date, content, mood, weather, created_at, updated_at
+        FROM diaries
+        WHERE id = #{id}
+    </select>
+
+    <select id="findByDate" resultMap="diaryResultMap">
+        SELECT id, date, content, mood, weather, created_at, updated_at
+        FROM diaries
+        WHERE date = #{date}
+        LIMIT 1
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO diaries (date, content, mood, weather, created_at, updated_at)
+        VALUES (#{date}, #{content}, #{mood}, #{weather}, NOW(), NOW())
+    </insert>
+
+    <update id="update">
+        UPDATE diaries
+        <set>
+            <if test="date != null">date = #{date},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="mood != null">mood = #{mood},</if>
+            <if test="weather != null">weather = #{weather},</if>
+            updated_at = NOW()
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM diaries WHERE id = #{id}
+    </delete>
+
+</mapper>
