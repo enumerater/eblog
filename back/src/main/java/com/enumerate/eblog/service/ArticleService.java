@@ -1,5 +1,6 @@
 package com.enumerate.eblog.service;
 
+import com.enumerate.eblog.dto.PageResponse;
 import com.enumerate.eblog.entity.Article;
 import com.enumerate.eblog.mapper.ArticleMapper;
 import com.enumerate.eblog.mapper.CommentMapper;
@@ -22,8 +23,22 @@ public class ArticleService {
         return articleMapper.findAll();
     }
 
+    public PageResponse<Article> findAllPaginated(int page, int size) {
+        int offset = page * size;
+        List<Article> content = articleMapper.findAllWithPagination(offset, size);
+        long total = articleMapper.countAll();
+        return new PageResponse<>(content, page, size, total);
+    }
+
     public List<Article> search(String keyword, String tag) {
         return articleMapper.search(keyword, tag);
+    }
+
+    public PageResponse<Article> searchPaginated(String keyword, String tag, int page, int size) {
+        int offset = page * size;
+        List<Article> content = articleMapper.searchWithPagination(keyword, tag, offset, size);
+        long total = articleMapper.countSearch(keyword, tag);
+        return new PageResponse<>(content, page, size, total);
     }
 
     public Article findById(Long id) {

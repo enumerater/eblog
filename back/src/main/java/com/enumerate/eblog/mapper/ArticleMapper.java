@@ -11,7 +11,16 @@ public interface ArticleMapper {
 
     List<Article> findAll();
 
+    List<Article> findAllWithPagination(@Param("offset") int offset, @Param("limit") int limit);
+
+    long countAll();
+
     List<Article> search(@Param("keyword") String keyword, @Param("tag") String tag);
+
+    List<Article> searchWithPagination(@Param("keyword") String keyword, @Param("tag") String tag,
+                                       @Param("offset") int offset, @Param("limit") int limit);
+
+    long countSearch(@Param("keyword") String keyword, @Param("tag") String tag);
 
     Article findById(@Param("id") Long id);
 

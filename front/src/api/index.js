@@ -237,13 +237,19 @@ export const auth = {
 export const api = {
   // ── Articles ──
 
-  getArticles() {
-    return request('/articles');
+  /** 分页获取文章（首页使用） */
+  getArticles(page = 0, size = 10) {
+    return request(`/articles?page=${page}&size=${size}`);
+  },
+
+  /** 获取所有文章（管理页面使用） */
+  getAllArticles() {
+    return request('/articles?page=-1');
   },
 
   searchArticles(params) {
     const qs = new URLSearchParams(
-      Object.fromEntries(Object.entries(params).filter(([, v]) => v))
+      Object.fromEntries(Object.entries(params).filter(([, v]) => v != null && v !== ''))
     ).toString();
     return request(`/articles${qs ? '?' + qs : ''}`);
   },

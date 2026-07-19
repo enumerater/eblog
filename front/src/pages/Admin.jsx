@@ -14,7 +14,7 @@ export default function Admin() {
 
   const fetchArticles = () => {
     setLoading(true);
-    api.getArticles()
+    api.getAllArticles()
       .then(data => setArticles(data))
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));

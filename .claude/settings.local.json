@@ -41,7 +41,11 @@
       "Bash(mvn package *)",
       "Bash(java -jar target/*.jar --server.port=8080)",
       "Bash(curl -s -X POST -H \"Content-Type: application/json\" -d '{\"username\":\"admin\",\"password\":\"1234\"}' http://localhost:8080/api/auth/login)",
-      "Bash(curl *)"
+      "Bash(curl *)",
+      "Bash(python3 -m json.tool)",
+      "Bash(tasklist *)",
+      "Bash(taskkill //F //PID 23536)",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({k:v for k,v in d.items\\(\\) if k!='content'}, indent=2\\)\\)\")"
     ]
   }
 }

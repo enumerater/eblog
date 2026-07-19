@@ -1,6 +1,7 @@
 package com.enumerate.eblog.controller;
 
 import com.enumerate.eblog.dto.ArticleResponse;
+import com.enumerate.eblog.dto.PageResponse;
 import com.enumerate.eblog.entity.Article;
 import com.enumerate.eblog.service.ArticleService;
 import org.springframework.http.HttpStatus;
@@ -21,18 +22,42 @@ public class ArticleController {
     }
 
     @GetMapping
-    public List<ArticleResponse> getAll(
+    public ResponseEntity<?> getAll(
             @RequestParam(required = false) String keyword,
-            @RequestParam(required = false) String tag) {
-        List<Article> articles;
-        if ((keyword != null && !keyword.isBlank()) || (tag != null && !tag.isBlank())) {
-            articles = articleService.search(keyword, tag);
-        } else {
-            articles = articleService.findAll();
+            @RequestParam(required = false) String tag,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        // 非分页请求（兼容旧调用）
+        if (page < 0) {
+            List<Article> articles;
+            if ((keyword != null && !keyword.isBlank()) || (tag != null && !tag.isBlank())) {
+                articles = articleService.search(keyword, tag);
+            } else {
+                articles = articleService.findAll();
+            }
+            return ResponseEntity.ok(articles.stream()
+                    .map(ArticleResponse::from)
+                    .toList());
         }
-        return articles.stream()
+
+        // 分页请求
+        PageResponse<Article> pageResult;
+        if ((keyword != null && !keyword.isBlank()) || (tag != null && !tag.isBlank())) {
+            pageResult = articleService.searchPaginated(keyword, tag, page, size);
+        } else {
+            pageResult = articleService.findAllPaginated(page, size);
+        }
+
+        // 转换 content 为 ArticleResponse
+        List<ArticleResponse> content = pageResult.getContent().stream()
                 .map(ArticleResponse::from)
                 .toList();
+
+        PageResponse<ArticleResponse> response = new PageResponse<>(
+                content, pageResult.getPage(), pageResult.getSize(), pageResult.getTotalElements());
+
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")

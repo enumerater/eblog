@@ -19,6 +19,17 @@
         ORDER BY created_at DESC
     </select>
 
+    <select id="findAllWithPagination" resultMap="articleResultMap">
+        SELECT id, title, content, tags_json, summary, created_at, updated_at
+        FROM articles
+        ORDER BY created_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countAll" resultType="long">
+        SELECT COUNT(*) FROM articles
+    </select>
+
     <select id="search" resultMap="articleResultMap">
         SELECT id, title, content, tags_json, summary, created_at, updated_at
         FROM articles
@@ -31,6 +42,33 @@
             </if>
         </where>
         ORDER BY created_at DESC
+    </select>
+
+    <select id="searchWithPagination" resultMap="articleResultMap">
+        SELECT id, title, content, tags_json, summary, created_at, updated_at
+        FROM articles
+        <where>
+            <if test="keyword != null and keyword != ''">
+                (title LIKE CONCAT('%', #{keyword}, '%') OR content LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="tag != null and tag != ''">
+                AND tags_json LIKE CONCAT('%', #{tag}, '%')
+            </if>
+        </where>
+        ORDER BY created_at DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="countSearch" resultType="long">
+        SELECT COUNT(*) FROM articles
+        <where>
+            <if test="keyword != null and keyword != ''">
+                (title LIKE CONCAT('%', #{keyword}, '%') OR content LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+            <if test="tag != null and tag != ''">
+                AND tags_json LIKE CONCAT('%', #{tag}, '%')
+            </if>
+        </where>
     </select>
 
     <select id="findById" resultMap="articleResultMap">
